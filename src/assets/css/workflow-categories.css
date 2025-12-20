@@ -1,0 +1,284 @@
+/* 🎨 ESTILOS PARA CATEGORÍAS DE ACCIONES */
+
+.action-category {
+    margin-bottom: 1.25rem;
+    border-radius: 8px;
+    overflow: hidden;
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid rgba(51, 65, 85, 0.5);
+}
+
+.category-header {
+    padding: 0.75rem 1rem;
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border-bottom: 1px solid #334155;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    transition: background 0.2s;
+    user-select: none;
+}
+
+.category-header:hover {
+    background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
+}
+
+.category-header i {
+    font-size: 1.1rem;
+    color: #60a5fa;
+}
+
+.category-header span {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #cbd5e1;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.palette-items {
+    padding: 0.75rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 0.5rem;
+}
+
+.palette-item {
+    background: linear-gradient(135deg, #334155 0%, #475569 100%);
+    padding: 0.75rem 0.5rem;
+    border-radius: 6px;
+    cursor: move;
+    text-align: center;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.palette-item:hover {
+    background: linear-gradient(135deg, #475569 0%, #64748b 100%);
+    transform: translateY(-3px);
+    border-color: #60a5fa;
+    box-shadow: 0 4px 12px rgba(96, 165, 250, 0.3);
+}
+
+.palette-item:active {
+    transform: scale(0.95);
+}
+
+.palette-item i {
+    font-size: 1.5rem;
+    color: #60a5fa;
+}
+
+.palette-item span {
+    font-size: 0.8rem;
+    color: #e2e8f0;
+    font-weight: 500;
+}
+
+/* Categorías colapsables */
+.action-category.collapsed .palette-items {
+    display: none;
+}
+
+.category-header::after {
+    content: '\f107'; /* fa-angle-down */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    margin-left: auto;
+    transition: transform 0.2s;
+    color: #94a3b8;
+}
+
+.action-category.collapsed .category-header::after {
+    transform: rotate(-90deg);
+}
+
+/* Colores específicos por categoría */
+.action-category:nth-child(1) .category-header i { color: #60a5fa; } /* Web - Azul */
+.action-category:nth-child(2) .category-header i { color: #34d399; } /* Excel - Verde */
+.action-category:nth-child(3) .category-header i { color: #f87171; } /* PDF - Rojo */
+.action-category:nth-child(4) .category-header i { color: #a78bfa; } /* OCR - Morado */
+.action-category:nth-child(5) .category-header i { color: #fbbf24; } /* DB - Amarillo */
+.action-category:nth-child(6) .category-header i { color: #fb923c; } /* Control - Naranja */
+.action-category:nth-child(7) .category-header i { color: #38bdf8; } /* Variables - Cyan */
+.action-category:nth-child(8) .category-header i { color: #f472b6; } /* Scripts - Rosa */
+.action-category:nth-child(9) .category-header i { color: #a3e635; } /* Email - Lima */
+.action-category:nth-child(10) .category-header i { color: #c084fc; } /* Archivos - Violeta */
+
+/* Drag and drop */
+.palette-item.dragging {
+    opacity: 0.5;
+    transform: rotate(5deg);
+}
+
+/* Scrollbar personalizado para paleta */
+.actions-palette {
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+.actions-palette::-webkit-scrollbar {
+    width: 8px;
+}
+
+.actions-palette::-webkit-scrollbar-track {
+    background: #0f172a;
+    border-radius: 4px;
+}
+
+.actions-palette::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 4px;
+}
+
+.actions-palette::-webkit-scrollbar-thumb:hover {
+    background: #475569;
+}
+
+/* DataFrames Section */
+.dataframes-section {
+    margin-bottom: 1.5rem;
+    border-radius: 8px;
+    overflow: hidden;
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid rgba(51, 65, 85, 0.5);
+}
+
+.dataframes-header {
+    padding: 0.75rem 1rem;
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border-bottom: 1px solid #334155;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    transition: background 0.2s;
+    user-select: none;
+}
+
+.dataframes-header:hover {
+    background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
+}
+
+.dataframes-header i {
+    font-size: 1.1rem;
+    color: #38bdf8;
+}
+
+.dataframes-header span {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #cbd5e1;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.dataframes-header .badge {
+    margin-left: auto;
+    background: #38bdf8;
+    color: #0f172a;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    min-width: 24px;
+    text-align: center;
+}
+
+.dataframes-content {
+    padding: 0.75rem;
+}
+
+.dataframes-empty {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: #64748b;
+}
+
+.dataframes-empty i {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    opacity: 0.5;
+}
+
+.dataframes-empty p {
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.dataframes-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.dataframe-item {
+    background: linear-gradient(135deg, #334155 0%, #475569 100%);
+    padding: 0.75rem;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.dataframe-item:hover {
+    background: linear-gradient(135deg, #475569 0%, #64748b 100%);
+    border-color: #38bdf8;
+    box-shadow: 0 4px 12px rgba(56, 189, 248, 0.2);
+}
+
+.dataframe-item i {
+    font-size: 1.25rem;
+    color: #38bdf8;
+}
+
+.dataframe-info {
+    flex: 1;
+}
+
+.dataframe-name {
+    font-weight: 600;
+    color: #e2e8f0;
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+}
+
+.dataframe-meta {
+    font-size: 0.75rem;
+    color: #94a3b8;
+}
+
+.dataframe-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.dataframe-actions button {
+    background: transparent;
+    border: 1px solid #475569;
+    color: #cbd5e1;
+    padding: 0.35rem 0.65rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.8rem;
+}
+
+.dataframe-actions button:hover {
+    background: #475569;
+    border-color: #60a5fa;
+    color: #fff;
+}
+
+.dataframe-actions button.delete:hover {
+    background: #ef4444;
+    border-color: #ef4444;
+}

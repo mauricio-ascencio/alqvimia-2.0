@@ -1,0 +1,531 @@
+/*
+ * Workflow Studio - Diseño inspirado en UiPath y Automation Anywhere
+ */
+
+/* Layout principal de 3 paneles */
+.workflow-studio {
+    display: grid;
+    grid-template-columns: 250px 1fr 300px;
+    grid-template-rows: auto 1fr auto;
+    height: calc(100vh - 140px);
+    gap: 0;
+    background: var(--bg-primary);
+}
+
+.workflow-studio.left-collapsed {
+    grid-template-columns: 50px 1fr 300px;
+}
+
+.workflow-studio.right-collapsed {
+    grid-template-columns: 250px 1fr 50px;
+}
+
+.workflow-studio.both-collapsed {
+    grid-template-columns: 50px 1fr 50px;
+}
+
+/* Header con tabs */
+.studio-header {
+    grid-column: 1 / -1;
+    background: var(--dark-bg);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    gap: 1rem;
+}
+
+.workflow-tabs {
+    display: flex;
+    gap: 0.25rem;
+    flex: 1;
+}
+
+.workflow-tab {
+    padding: 0.5rem 1rem;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    border-radius: 4px 4px 0 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s;
+}
+
+.workflow-tab:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.workflow-tab.active {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.workflow-tab .close-tab {
+    opacity: 0;
+    margin-left: 0.5rem;
+    padding: 0.25rem;
+    border-radius: 4px;
+}
+
+.workflow-tab:hover .close-tab {
+    opacity: 1;
+}
+
+.workflow-tab .close-tab:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Panel izquierdo - Acciones */
+.studio-left-panel {
+    background: var(--card-bg);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.panel-header {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--dark-bg);
+}
+
+.panel-header h3 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.panel-collapse-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.panel-collapse-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+}
+
+/* Buscador de acciones */
+.actions-search {
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.actions-search input {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-primary);
+    font-size: 0.85rem;
+}
+
+.actions-search input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+/* Categorías de acciones */
+.actions-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0.5rem;
+}
+
+.action-category {
+    margin-bottom: 0.5rem;
+}
+
+.category-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.2s;
+    user-select: none;
+}
+
+.category-header:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.category-header i.fa-chevron-right {
+    font-size: 0.7rem;
+    transition: transform 0.2s;
+}
+
+.action-category.expanded .category-header i.fa-chevron-right {
+    transform: rotate(90deg);
+}
+
+.category-header .category-icon {
+    width: 20px;
+    text-align: center;
+}
+
+.category-header .category-name {
+    flex: 1;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.category-header .category-count {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0.15rem 0.5rem;
+    border-radius: 12px;
+}
+
+/* Items de acciones */
+.category-items {
+    display: none;
+    padding-left: 1.5rem;
+    margin-top: 0.25rem;
+}
+
+.action-category.expanded .category-items {
+    display: block;
+}
+
+.action-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    margin-bottom: 0.25rem;
+    background: var(--bg-primary);
+    border: 1px solid transparent;
+    border-radius: 6px;
+    cursor: grab;
+    transition: all 0.2s;
+    font-size: 0.85rem;
+}
+
+.action-item:hover {
+    background: var(--hover-bg);
+    border-color: var(--primary-color);
+    transform: translateX(3px);
+}
+
+.action-item:active {
+    cursor: grabbing;
+}
+
+.action-item.dragging {
+    opacity: 0.5;
+    cursor: grabbing;
+    transform: scale(0.95);
+}
+
+.action-item i {
+    color: var(--primary-color);
+    width: 16px;
+    text-align: center;
+}
+
+/* Panel central - Canvas */
+.studio-center-panel {
+    background: var(--bg-primary);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.canvas-toolbar {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--card-bg);
+}
+
+.canvas-toolbar button {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.85rem;
+}
+
+.canvas-container {
+    flex: 1;
+    overflow: auto;
+    padding: 2rem;
+    position: relative;
+}
+
+.workflow-canvas {
+    min-height: 100%;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    background-size: 20px 20px;
+    border-radius: 8px;
+    padding: 2rem;
+    transition: all 0.3s;
+}
+
+.workflow-canvas.drag-over {
+    background-color: rgba(37, 99, 235, 0.05);
+    border: 2px dashed var(--primary-color);
+}
+
+.workflow-canvas-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    min-height: 400px;
+    color: var(--text-secondary);
+}
+
+.workflow-canvas-empty i {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.3;
+}
+
+.workflow-canvas-empty p {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+
+.workflow-canvas-empty small {
+    font-size: 0.9rem;
+    opacity: 0.7;
+}
+
+/* Steps en el canvas */
+.workflow-step {
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+}
+
+.workflow-step:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.workflow-step.selected {
+    border-color: var(--primary-color);
+    background: rgba(37, 99, 235, 0.05);
+}
+
+.workflow-step-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.workflow-step-icon {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--primary-color);
+    border-radius: 6px;
+    color: white;
+}
+
+.workflow-step-info {
+    flex: 1;
+}
+
+.workflow-step-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+}
+
+.workflow-step-type {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.workflow-step-actions {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.workflow-step-actions button {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.workflow-step-actions button:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+}
+
+/* Panel derecho - Propiedades */
+.studio-right-panel {
+    background: var(--card-bg);
+    border-left: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.properties-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+}
+
+.property-group {
+    margin-bottom: 1.5rem;
+}
+
+.property-group-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-bottom: 0.75rem;
+    letter-spacing: 0.5px;
+}
+
+.property-field {
+    margin-bottom: 1rem;
+}
+
+.property-field label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.4rem;
+}
+
+.property-field input,
+.property-field select,
+.property-field textarea {
+    width: 100%;
+    padding: 0.5rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-primary);
+    font-size: 0.85rem;
+}
+
+.property-field input:focus,
+.property-field select:focus,
+.property-field textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+/* Footer con info */
+.studio-footer {
+    grid-column: 1 / -1;
+    background: var(--dark-bg);
+    border-top: 1px solid var(--border-color);
+    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.studio-footer-left,
+.studio-footer-right {
+    display: flex;
+    gap: 1rem;
+}
+
+.studio-footer-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Collapsed states */
+.studio-left-panel.collapsed .panel-header h3,
+.studio-left-panel.collapsed .actions-search,
+.studio-left-panel.collapsed .actions-list,
+.studio-right-panel.collapsed .panel-header h3,
+.studio-right-panel.collapsed .properties-content {
+    display: none;
+}
+
+.studio-left-panel.collapsed,
+.studio-right-panel.collapsed {
+    width: 50px;
+    align-items: center;
+}
+
+/* Scrollbar personalizado */
+.actions-list::-webkit-scrollbar,
+.canvas-container::-webkit-scrollbar,
+.properties-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.actions-list::-webkit-scrollbar-track,
+.canvas-container::-webkit-scrollbar-track,
+.properties-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.actions-list::-webkit-scrollbar-thumb,
+.canvas-container::-webkit-scrollbar-thumb,
+.properties-content::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+.actions-list::-webkit-scrollbar-thumb:hover,
+.canvas-container::-webkit-scrollbar-thumb:hover,
+.properties-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Animaciones */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.workflow-step {
+    animation: slideIn 0.3s ease;
+}

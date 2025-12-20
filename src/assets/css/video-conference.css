@@ -1,0 +1,1390 @@
+/**
+ * 🎨 ESTILOS DE VIDEOCONFERENCIA
+ */
+
+/* ==========================================
+   CONTENEDOR PRINCIPAL
+   ========================================== */
+
+.video-conference-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #1a1a1a;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+}
+
+.video-conference-container.hidden {
+    display: none;
+}
+
+.video-conference-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+}
+
+/* ==========================================
+   HEADER
+   ========================================== */
+
+.vc-header {
+    background: #2c2c2c;
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #3a3a3a;
+    flex-shrink: 0;
+}
+
+.vc-header-left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.vc-header-left h2 {
+    margin: 0;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.vc-header-right {
+    display: flex;
+    gap: 10px;
+}
+
+.vc-timer {
+    font-family: 'Courier New', monospace;
+    font-size: 16px;
+    color: #4CAF50;
+    font-weight: bold;
+    padding: 5px 15px;
+    background: rgba(76, 175, 80, 0.1);
+    border-radius: 5px;
+}
+
+.vc-recording-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #f44336;
+    font-weight: bold;
+    padding: 5px 15px;
+    background: rgba(244, 67, 54, 0.1);
+    border-radius: 5px;
+}
+
+.vc-recording-indicator.hidden {
+    display: none;
+}
+
+.recording-pulse {
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+/* ==========================================
+   ÁREA PRINCIPAL
+   ========================================== */
+
+.vc-main-area {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+.vc-video-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 10px;
+    padding: 15px;
+    background: #1a1a1a;
+    overflow-y: auto;
+}
+
+.vc-video-item {
+    position: relative;
+    background: #000;
+    border-radius: 10px;
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.vc-video-item video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.vc-video-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+    padding: 10px 15px;
+    color: white;
+}
+
+.vc-participant-name {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.vc-local-video {
+    border: 2px solid #4CAF50;
+}
+
+/* ==========================================
+   SIDEBAR
+   ========================================== */
+
+.vc-sidebar {
+    width: 350px;
+    background: #2c2c2c;
+    border-left: 1px solid #3a3a3a;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+}
+
+.vc-sidebar-tabs {
+    display: flex;
+    background: #1a1a1a;
+    border-bottom: 1px solid #3a3a3a;
+    overflow-x: auto;
+}
+
+.vc-tab {
+    flex: 1;
+    min-width: max-content;
+    padding: 12px 15px;
+    background: transparent;
+    border: none;
+    color: #999;
+    cursor: pointer;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.3s;
+    position: relative;
+}
+
+.vc-tab:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+}
+
+.vc-tab.active {
+    color: #4CAF50;
+    background: #2c2c2c;
+}
+
+.vc-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #4CAF50;
+}
+
+.vc-badge {
+    background: #f44336;
+    color: white;
+    border-radius: 10px;
+    padding: 2px 6px;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.vc-badge.hidden {
+    display: none;
+}
+
+.vc-badge-success {
+    background: #4CAF50;
+    color: white;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.vc-sidebar-content {
+    flex: 1;
+    overflow-y: auto;
+    position: relative;
+}
+
+.vc-panel {
+    display: none;
+    padding: 15px;
+    height: 100%;
+    flex-direction: column;
+}
+
+.vc-panel.active {
+    display: flex;
+}
+
+/* ==========================================
+   PARTICIPANTES
+   ========================================== */
+
+.vc-participants-list {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.vc-participant-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    color: white;
+}
+
+.vc-participant-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.vc-participant-avatar i {
+    font-size: 18px;
+    color: white;
+}
+
+.vc-participant-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.vc-participant-name {
+    font-weight: bold;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.vc-participant-email {
+    font-size: 12px;
+    color: #999;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.vc-participant-status {
+    flex-shrink: 0;
+}
+
+.vc-invite-section {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #3a3a3a;
+}
+
+/* ==========================================
+   CHAT
+   ========================================== */
+
+.vc-chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 10px;
+}
+
+.vc-chat-message {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 10px;
+    color: white;
+}
+
+.vc-message-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    font-size: 12px;
+}
+
+.vc-message-header strong {
+    color: #4CAF50;
+}
+
+.vc-message-time {
+    color: #999;
+}
+
+.vc-message-content {
+    font-size: 14px;
+    line-height: 1.5;
+    word-wrap: break-word;
+}
+
+.vc-chat-input-container {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #3a3a3a;
+}
+
+.vc-chat-input-container textarea {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid #3a3a3a;
+    border-radius: 8px;
+    padding: 10px;
+    color: white;
+    font-family: inherit;
+    font-size: 14px;
+    resize: none;
+}
+
+.vc-chat-input-container textarea:focus {
+    outline: none;
+    border-color: #4CAF50;
+}
+
+.vc-btn-send {
+    width: 40px;
+    height: 40px;
+    background: #4CAF50;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.vc-btn-send:hover {
+    background: #45a049;
+}
+
+/* ==========================================
+   NOTAS
+   ========================================== */
+
+.vc-notes-toolbar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.vc-notes-list {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.vc-note-item {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 12px;
+    color: white;
+}
+
+.vc-note-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.vc-note-time {
+    color: #999;
+    font-size: 12px;
+    margin-left: 10px;
+}
+
+.vc-note-content {
+    width: 100%;
+    min-height: 80px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid #3a3a3a;
+    border-radius: 5px;
+    padding: 10px;
+    color: white;
+    font-family: inherit;
+    font-size: 13px;
+    resize: vertical;
+}
+
+.vc-note-content:focus {
+    outline: none;
+    border-color: #4CAF50;
+}
+
+/* ==========================================
+   ARCHIVOS
+   ========================================== */
+
+.vc-files-upload {
+    margin-bottom: 15px;
+}
+
+.vc-files-list {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.vc-file-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    color: white;
+}
+
+.vc-file-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.vc-file-icon i {
+    font-size: 20px;
+    color: white;
+}
+
+.vc-file-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.vc-file-name {
+    font-weight: bold;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.vc-file-meta {
+    font-size: 11px;
+    color: #999;
+    margin-top: 2px;
+}
+
+/* ==========================================
+   TRANSCRIPCIÓN
+   ========================================== */
+
+.vc-transcript-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.vc-transcript-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+}
+
+.vc-transcript-entry {
+    margin-bottom: 15px;
+    color: white;
+}
+
+.vc-transcript-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    font-size: 12px;
+}
+
+.vc-transcript-header strong {
+    color: #4CAF50;
+}
+
+.vc-transcript-time {
+    color: #999;
+}
+
+.vc-transcript-text {
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* ==========================================
+   IA
+   ========================================== */
+
+.vc-ai-plugins {
+    margin-bottom: 20px;
+}
+
+.vc-ai-plugin {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 10px;
+    color: white;
+}
+
+.vc-ai-plugin-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.vc-ai-plugin-header i {
+    font-size: 18px;
+}
+
+.vc-ai-plugin-header span {
+    flex: 1;
+    font-weight: bold;
+}
+
+.vc-toggle {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+}
+
+.vc-toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.vc-toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #3a3a3a;
+    border-radius: 24px;
+    transition: 0.3s;
+}
+
+.vc-toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    border-radius: 50%;
+    transition: 0.3s;
+}
+
+.vc-toggle input:checked + .vc-toggle-slider {
+    background-color: #4CAF50;
+}
+
+.vc-toggle input:checked + .vc-toggle-slider:before {
+    transform: translateX(20px);
+}
+
+.vc-ai-plugin-config {
+    display: none;
+}
+
+.vc-ai-plugin input[type="checkbox"]:checked ~ .vc-ai-plugin-config {
+    display: block;
+}
+
+.vc-ai-plugin-config input {
+    width: 100%;
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid #3a3a3a;
+    border-radius: 5px;
+    color: white;
+    font-size: 13px;
+}
+
+.vc-ai-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* ==========================================
+   FOOTER Y CONTROLES
+   ========================================== */
+
+.vc-footer {
+    background: #2c2c2c;
+    padding: 20px;
+    border-top: 1px solid #3a3a3a;
+    flex-shrink: 0;
+}
+
+.vc-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.vc-control-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    transition: all 0.3s;
+    position: relative;
+}
+
+.vc-control-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+}
+
+.vc-control-btn.vc-muted {
+    background: rgba(244, 67, 54, 0.3);
+}
+
+.vc-control-btn.vc-active {
+    background: #4CAF50;
+}
+
+.vc-recording-controls {
+    display: flex;
+    gap: 10px;
+}
+
+.vc-btn-record {
+    background: rgba(244, 67, 54, 0.2);
+    color: #f44336;
+    width: auto;
+    padding: 0 20px;
+    border-radius: 25px;
+    gap: 10px;
+}
+
+.vc-btn-record:hover {
+    background: rgba(244, 67, 54, 0.3);
+}
+
+.vc-btn-pause,
+.vc-btn-stop {
+    width: auto;
+    padding: 0 20px;
+    border-radius: 25px;
+    gap: 10px;
+}
+
+.vc-btn-end-call {
+    background: #f44336;
+    width: auto;
+    padding: 0 20px;
+    border-radius: 25px;
+    gap: 10px;
+}
+
+.vc-btn-end-call:hover {
+    background: #d32f2f;
+}
+
+/* ==========================================
+   BOTONES GENERALES
+   ========================================== */
+
+.vc-btn,
+.vc-btn-primary,
+.vc-btn-sm {
+    padding: 8px 16px;
+    background: #4CAF50;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s;
+}
+
+.vc-btn:hover,
+.vc-btn-primary:hover,
+.vc-btn-sm:hover {
+    background: #45a049;
+}
+
+.vc-btn {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.vc-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.vc-btn-danger {
+    background: #f44336;
+}
+
+.vc-btn-danger:hover {
+    background: #d32f2f;
+}
+
+.vc-btn-sm {
+    padding: 6px 12px;
+    font-size: 12px;
+}
+
+.vc-btn-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 5px;
+    border: none;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+}
+
+.vc-btn-icon:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.vc-btn-copy {
+    padding: 8px 12px;
+    background: #2196F3;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+}
+
+.vc-btn-copy:hover {
+    background: #1976D2;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* ==========================================
+   MODALES
+   ========================================== */
+
+.vc-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 20000;
+}
+
+.vc-modal.hidden {
+    display: none;
+}
+
+.vc-modal-content {
+    background: #2c2c2c;
+    border-radius: 10px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    color: white;
+}
+
+.vc-modal-content.vc-modal-large {
+    max-width: 800px;
+}
+
+.vc-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #3a3a3a;
+}
+
+.vc-modal-header h3 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.vc-modal-close {
+    width: 30px;
+    height: 30px;
+    border-radius: 5px;
+    border: none;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.vc-modal-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.vc-modal-body {
+    padding: 20px;
+}
+
+.vc-modal-footer {
+    padding: 20px;
+    border-top: 1px solid #3a3a3a;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+/* Modal de invitación */
+.vc-invite-options {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.vc-invite-manual {
+    margin-bottom: 20px;
+}
+
+.vc-invite-manual h4 {
+    margin: 0 0 10px 0;
+    font-size: 14px;
+}
+
+.vc-invite-manual input {
+    width: 100%;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid #3a3a3a;
+    border-radius: 5px;
+    color: white;
+    margin-bottom: 10px;
+}
+
+.vc-invite-link h4 {
+    margin: 0 0 10px 0;
+    font-size: 14px;
+}
+
+.vc-link-container {
+    display: flex;
+    gap: 10px;
+}
+
+.vc-link-container input {
+    flex: 1;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid #3a3a3a;
+    border-radius: 5px;
+    color: white;
+}
+
+.vc-invited-list {
+    margin-top: 20px;
+}
+
+.vc-invited-header {
+    margin: 0 0 10px 0;
+    font-size: 14px;
+}
+
+.vc-invitee-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 5px;
+    margin-bottom: 8px;
+}
+
+.vc-invitee-name {
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.vc-invitee-email {
+    font-size: 12px;
+    color: #999;
+}
+
+/* Modal de proceso */
+.vc-process-sections {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.vc-process-section h4 {
+    margin: 0 0 10px 0;
+    font-size: 14px;
+    color: #4CAF50;
+}
+
+.vc-process-section textarea {
+    width: 100%;
+    min-height: 150px;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid #3a3a3a;
+    border-radius: 5px;
+    color: white;
+    font-family: inherit;
+    font-size: 13px;
+    resize: vertical;
+}
+
+.vc-requirements-section {
+    margin-bottom: 20px;
+}
+
+.vc-requirements-section h4 {
+    margin: 0 0 10px 0;
+    font-size: 14px;
+    color: #4CAF50;
+}
+
+.vc-requirements-list {
+    margin-bottom: 10px;
+}
+
+.vc-requirement-item {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    align-items: center;
+}
+
+.vc-requirement-input {
+    flex: 1;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid #3a3a3a;
+    border-radius: 5px;
+    color: white;
+}
+
+.vc-requirement-priority {
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid #3a3a3a;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+}
+
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
+
+@media (max-width: 768px) {
+    .vc-sidebar {
+        width: 100%;
+        max-height: 300px;
+    }
+
+    .vc-main-area {
+        flex-direction: column;
+    }
+
+    .vc-video-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .vc-process-sections {
+        grid-template-columns: 1fr;
+    }
+
+    .vc-controls {
+        gap: 10px;
+    }
+
+    .vc-control-btn {
+        width: 45px;
+        height: 45px;
+        font-size: 16px;
+    }
+}
+
+/* ==========================================
+   SCROLLBAR PERSONALIZADA
+   ========================================== */
+
+.vc-sidebar-content::-webkit-scrollbar,
+.vc-chat-messages::-webkit-scrollbar,
+.vc-notes-list::-webkit-scrollbar,
+.vc-files-list::-webkit-scrollbar,
+.vc-transcript-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.vc-sidebar-content::-webkit-scrollbar-track,
+.vc-chat-messages::-webkit-scrollbar-track,
+.vc-notes-list::-webkit-scrollbar-track,
+.vc-files-list::-webkit-scrollbar-track,
+.vc-transcript-content::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.vc-sidebar-content::-webkit-scrollbar-thumb,
+.vc-chat-messages::-webkit-scrollbar-thumb,
+.vc-notes-list::-webkit-scrollbar-thumb,
+.vc-files-list::-webkit-scrollbar-thumb,
+.vc-transcript-content::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+}
+
+.vc-sidebar-content::-webkit-scrollbar-thumb:hover,
+.vc-chat-messages::-webkit-scrollbar-thumb:hover,
+.vc-notes-list::-webkit-scrollbar-thumb:hover,
+.vc-files-list::-webkit-scrollbar-thumb:hover,
+.vc-transcript-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* ==========================================
+   EMOJIS
+   ========================================== */
+
+.vc-emoji-picker {
+    position: absolute;
+    bottom: 60px;
+    left: 10px;
+    background: #2c2c2c;
+    border: 1px solid #3a3a3a;
+    border-radius: 10px;
+    padding: 10px;
+    max-width: 280px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.vc-emoji-picker.hidden {
+    display: none;
+}
+
+.vc-emoji-grid {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 5px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.vc-emoji-item {
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 5px;
+    transition: all 0.2s;
+}
+
+.vc-emoji-item:hover {
+    background: #3a3a3a;
+    transform: scale(1.2);
+}
+
+.vc-btn-emoji {
+    background: transparent;
+    border: none;
+    color: #888;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 5px;
+    transition: all 0.2s;
+}
+
+.vc-btn-emoji:hover {
+    color: #FFA500;
+    background: rgba(255, 165, 0, 0.1);
+}
+
+.vc-chat-input-container {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding: 10px;
+    background: #2c2c2c;
+    border-top: 1px solid #3a3a3a;
+}
+
+/* ==========================================
+   FILTROS DE VIDEO
+   ========================================== */
+
+.vc-filter-selector {
+    position: relative;
+    display: inline-block;
+}
+
+.vc-filter-menu {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    background: #2c2c2c;
+    border: 1px solid #3a3a3a;
+    border-radius: 10px;
+    padding: 5px;
+    margin-bottom: 10px;
+    min-width: 200px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.vc-filter-menu.hidden {
+    display: none;
+}
+
+.vc-filter-menu button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 15px;
+    background: transparent;
+    border: none;
+    color: white;
+    text-align: left;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: all 0.2s;
+    font-size: 14px;
+}
+
+.vc-filter-menu button:hover {
+    background: #3a3a3a;
+}
+
+.vc-filter-menu button i {
+    width: 20px;
+    color: #4ECDC4;
+}
+
+/* ==========================================
+   AVATARES
+   ========================================== */
+
+.vc-participant-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #3a3a3a;
+}
+
+.vc-participant-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.vc-avatar-initials {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+/* ==========================================
+   BARRA DE PROGRESO
+   ========================================== */
+
+.vc-progress-container {
+    width: 100%;
+    margin: 20px 0;
+}
+
+.vc-progress-bar {
+    width: 100%;
+    height: 30px;
+    background: #2c2c2c;
+    border-radius: 15px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid #3a3a3a;
+}
+
+.vc-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4ECDC4 0%, #45B7D1 100%);
+    border-radius: 15px;
+    transition: width 0.5s ease;
+    width: 0%;
+    position: relative;
+    overflow: hidden;
+}
+
+.vc-progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.3) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.vc-progress-text {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #4ECDC4;
+}
+
+.vc-progress-steps {
+    margin-top: 20px;
+    padding: 15px;
+    background: #2c2c2c;
+    border-radius: 10px;
+    border: 1px solid #3a3a3a;
+}
+
+.vc-progress-step {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    color: white;
+    font-size: 16px;
+}
+
+.vc-progress-step i {
+    color: #4ECDC4;
+    font-size: 20px;
+}
+
+/* ==========================================
+   SELECTOR DE WORKFLOW
+   ========================================== */
+
+.vc-select {
+    width: 100%;
+    padding: 10px 15px;
+    background: #2c2c2c;
+    border: 1px solid #3a3a3a;
+    border-radius: 5px;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.vc-select:hover {
+    border-color: #4ECDC4;
+}
+
+.vc-select:focus {
+    outline: none;
+    border-color: #4ECDC4;
+    box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.1);
+}
+
+.vc-input {
+    width: 100%;
+    padding: 10px 15px;
+    background: #2c2c2c;
+    border: 1px solid #3a3a3a;
+    border-radius: 5px;
+    color: white;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.vc-input:hover {
+    border-color: #4ECDC4;
+}
+
+.vc-input:focus {
+    outline: none;
+    border-color: #4ECDC4;
+    box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.1);
+}
+
+.vc-input::placeholder {
+    color: #666;
+}

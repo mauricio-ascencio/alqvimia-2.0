@@ -1,0 +1,265 @@
+/* ========================================
+   DATABASE MANAGER - STYLES
+   ======================================== */
+
+/* Grid de conexiones */
+.db-connections-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+/* Tarjeta de conexión */
+.db-connection-card {
+    background: linear-gradient(135deg, #1e293b, #334155);
+    border: 1px solid #475569;
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: all 0.3s;
+}
+
+.db-connection-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    border-color: #2563eb;
+}
+
+.db-conn-header h3 {
+    margin: 0 0 0.5rem 0;
+    color: #e2e8f0;
+    font-size: 1.25rem;
+}
+
+.db-conn-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    font-size: 0.85rem;
+    color: #94a3b8;
+}
+
+.db-conn-details span {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.db-conn-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.db-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 2rem;
+}
+
+/* Formulario de conexión */
+.db-connection-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.db-connection-grid .full-width {
+    grid-column: 1 / -1;
+}
+
+.btn-toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 0.5rem;
+    transition: color 0.3s;
+}
+
+.btn-toggle-password:hover {
+    color: #e2e8f0;
+}
+
+/* Explorador de BD */
+.db-explorer {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    gap: 1.5rem;
+    height: calc(100vh - 250px);
+}
+
+.db-sidebar {
+    background: linear-gradient(135deg, #1e293b, #334155);
+    border: 1px solid #475569;
+    border-radius: 12px;
+    padding: 1rem;
+    overflow-y: auto;
+}
+
+.db-main-content {
+    background: linear-gradient(135deg, #1e293b, #334155);
+    border: 1px solid #475569;
+    border-radius: 12px;
+    padding: 1.5rem;
+    overflow-y: auto;
+}
+
+.db-tree-item {
+    padding: 0.5rem;
+    margin: 0.25rem 0;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #cbd5e1;
+    transition: all 0.3s;
+}
+
+.db-tree-item:hover {
+    background: rgba(37, 99, 235, 0.2);
+    color: #e2e8f0;
+}
+
+.db-tree-item.active {
+    background: #2563eb;
+    color: white;
+}
+
+.db-tree-children {
+    margin-left: 1rem;
+    border-left: 2px solid #475569;
+    padding-left: 0.5rem;
+}
+
+/* Toolbar del explorador */
+.db-toolbar {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #475569;
+}
+
+/* Query Editor */
+.query-editor {
+    background: #0f172a;
+    border: 1px solid #475569;
+    border-radius: 8px;
+    padding: 1rem;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 14px;
+    color: #e2e8f0;
+    min-height: 200px;
+    resize: vertical;
+    width: 100%;
+}
+
+/* Tabla de resultados */
+.db-results-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+}
+
+.db-results-table th {
+    background: #1e40af;
+    color: white;
+    padding: 0.75rem;
+    text-align: left;
+    font-weight: 600;
+}
+
+.db-results-table td {
+    padding: 0.75rem;
+    border-bottom: 1px solid #475569;
+    color: #cbd5e1;
+}
+
+.db-results-table tr:hover {
+    background: rgba(37, 99, 235, 0.1);
+}
+
+/* Estadísticas de tabla */
+.table-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.stat-card {
+    background: linear-gradient(135deg, #1e40af, #2563eb);
+    padding: 1rem;
+    border-radius: 8px;
+    color: white;
+}
+
+.stat-card h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 0.875rem;
+    opacity: 0.9;
+}
+
+.stat-card .value {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+/* Botones de exportación */
+.export-buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.export-buttons .btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .db-explorer {
+        grid-template-columns: 1fr;
+        height: auto;
+    }
+
+    .db-sidebar {
+        height: 300px;
+    }
+
+    .db-connections-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .db-connection-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .db-conn-actions {
+        flex-direction: column;
+    }
+
+    .db-conn-actions .btn {
+        width: 100%;
+    }
+
+    .table-stats {
+        grid-template-columns: 1fr;
+    }
+}

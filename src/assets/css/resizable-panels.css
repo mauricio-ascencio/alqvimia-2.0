@@ -1,0 +1,151 @@
+/* ========================================
+   RESIZABLE PANELS STYLES
+   ======================================== */
+
+/* Contenedor de paneles ajustables */
+.resizable-container {
+    display: flex;
+    height: 100%;
+    gap: 0;
+    position: relative;
+}
+
+/* Paneles */
+.resizable-panel {
+    overflow: auto;
+}
+
+.left-panel {
+    flex: 0 0 350px;
+    min-width: 200px;
+    max-width: 600px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: var(--card-bg);
+    border-right: 1px solid var(--border-color);
+}
+
+.right-panel {
+    flex: 1;
+    min-width: 400px;
+    overflow: auto;
+}
+
+/* Divisor ajustable */
+.panel-divider {
+    flex: 0 0 4px;
+    background: #334155;
+    cursor: col-resize;
+    position: relative;
+    transition: background 0.2s;
+    z-index: 10;
+}
+
+.panel-divider:hover {
+    background: #475569;
+}
+
+.panel-divider:active {
+    background: #2563eb;
+}
+
+/* Indicador visual del divisor */
+.panel-divider::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -2px;
+    right: -2px;
+    bottom: 0;
+    cursor: col-resize;
+}
+
+/* Grip icon container */
+.panel-divider > div {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 40px;
+    background: #475569;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    transition: all 0.2s;
+}
+
+.panel-divider:hover > div {
+    background: #2563eb;
+    height: 60px;
+}
+
+/* Estados de cursor */
+body.resizing {
+    cursor: col-resize !important;
+    user-select: none !important;
+}
+
+/* Scrollbar personalizado para paneles */
+.resizable-panel::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.resizable-panel::-webkit-scrollbar-track {
+    background: #0f172a;
+}
+
+.resizable-panel::-webkit-scrollbar-thumb {
+    background: #475569;
+    border-radius: 4px;
+}
+
+.resizable-panel::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+}
+
+/* Responsive - Deshabilitar resize en mobile */
+@media (max-width: 768px) {
+    .resizable-container {
+        flex-direction: column;
+    }
+
+    .panel-divider {
+        display: none;
+    }
+
+    .left-panel {
+        flex: 0 0 auto;
+        max-width: none;
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .right-panel {
+        flex: 1;
+        min-width: 100%;
+    }
+}
+
+/* Animación suave */
+.resizable-panel {
+    transition: flex 0.1s ease-out;
+}
+
+/* Override para asegurar que workflow canvas no tenga conflictos */
+#workflow-view .workflow-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+/* Asegurar que actions-palette se comporte bien */
+#workflow-view .actions-palette {
+    height: 100%;
+    overflow-y: auto;
+}

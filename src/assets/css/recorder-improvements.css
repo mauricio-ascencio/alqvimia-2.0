@@ -1,0 +1,244 @@
+/* Mejoras para el Grabador - Detección de Clicks e Imágenes */
+
+/* Animación para contador de acciones */
+#actionCount {
+    display: inline-block;
+    min-width: 30px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.5;
+        transform: scale(1.2);
+    }
+}
+
+/* Estilos para acciones con imágenes */
+.action-item.has-image {
+    border-left: 4px solid var(--success-color, #10b981);
+    background: linear-gradient(90deg, rgba(16, 185, 129, 0.1) 0%, transparent 100%);
+}
+
+.action-item.has-image .action-icon {
+    background: var(--success-color, #10b981);
+}
+
+/* Icono especial para imágenes */
+.action-item.has-image .action-icon i::before {
+    content: "🖼️";
+    font-style: normal;
+}
+
+/* Feedback visual mejorado */
+.capture-flash {
+    animation: captureFlash 0.3s ease-out;
+}
+
+@keyframes captureFlash {
+    0% {
+        background: rgba(16, 185, 129, 0.3);
+        transform: scale(1.05);
+    }
+    100% {
+        background: transparent;
+        transform: scale(1);
+    }
+}
+
+/* Contador pulsante */
+.recording-status.active #actionCount {
+    animation: counterPulse 0.5s ease-in-out;
+}
+
+@keyframes counterPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.3); color: #10b981; }
+}
+
+/* Highlight para nuevas acciones */
+.action-item.newly-added {
+    animation: slideInRight 0.4s ease-out;
+    background: linear-gradient(90deg, rgba(37, 99, 235, 0.2) 0%, transparent 100%);
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Estilos para diferentes tipos de acciones */
+.action-item[data-type="click"] {
+    border-left-color: #2563eb;
+}
+
+.action-item[data-type="type"] {
+    border-left-color: #8b5cf6;
+}
+
+.action-item[data-type="navigate"] {
+    border-left-color: #06b6d4;
+}
+
+.action-item[data-type="scroll"] {
+    border-left-color: #f59e0b;
+}
+
+.action-item[data-type="select"] {
+    border-left-color: #10b981;
+}
+
+/* Badge para identificar imágenes */
+.image-badge {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: bold;
+    margin-left: 8px;
+    display: inline-block;
+}
+
+/* Botón de preview de imagen */
+.image-preview-btn {
+    background: var(--success-color, #10b981);
+    border: none;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 11px;
+    margin-left: 8px;
+    transition: all 0.2s;
+}
+
+.image-preview-btn:hover {
+    background: #059669;
+    transform: scale(1.05);
+}
+
+/* Indicador de grabación en ventana externa */
+.rpa-recording-indicator {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    padding: 15px 25px;
+    border-radius: 30px;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-weight: bold;
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 8px 24px rgba(239, 68, 68, 0.4);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    font-size: 14px;
+    animation: slideInFromRight 0.5s ease-out;
+}
+
+@keyframes slideInFromRight {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Pulse para el dot del indicador */
+.recording-dot {
+    width: 12px;
+    height: 12px;
+    background: white;
+    border-radius: 50%;
+    animation: recordingPulse 1s infinite;
+}
+
+@keyframes recordingPulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.3;
+        transform: scale(0.8);
+    }
+}
+
+/* Highlight de click */
+.click-highlight {
+    position: fixed;
+    width: 30px;
+    height: 30px;
+    border: 3px solid #ef4444;
+    border-radius: 50%;
+    background: rgba(239, 68, 68, 0.2);
+    pointer-events: none;
+    z-index: 99999999;
+    animation: clickPulse 0.6s ease-out;
+}
+
+@keyframes clickPulse {
+    0% {
+        transform: scale(0.5);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(2);
+        opacity: 0;
+    }
+}
+
+/* Outline para imágenes detectadas */
+img[data-rpa-detected="true"] {
+    outline: 2px dashed #10b981 !important;
+    outline-offset: 2px;
+    animation: imageDetected 2s ease-out;
+}
+
+@keyframes imageDetected {
+    0% {
+        outline-color: #10b981;
+        outline-width: 4px;
+    }
+    100% {
+        outline-color: #10b981;
+        outline-width: 2px;
+    }
+}
+
+/* Tooltip de información */
+.action-tooltip {
+    position: absolute;
+    background: #1e293b;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 1000;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.action-item:hover .action-tooltip {
+    opacity: 1;
+}

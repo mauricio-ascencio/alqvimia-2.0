@@ -1,0 +1,121 @@
+/* ==========================================
+   MODAL DE CONFIGURACIÓN DE GUARDADO
+   ========================================== */
+
+.vc-save-config-section {
+    padding: 15px;
+    background: #1e1e1e;
+    border-radius: 8px;
+    border: 1px solid #3a3a3a;
+}
+
+.vc-save-config-section h4 {
+    margin: 0 0 10px 0;
+    color: #fff;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.vc-format-option,
+.vc-location-option {
+    display: flex;
+    align-items: flex-start;
+    padding: 15px;
+    background: #2c2c2c;
+    border: 2px solid #3a3a3a;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.vc-format-option:hover,
+.vc-location-option:hover {
+    border-color: #667eea;
+    background: #323232;
+}
+
+.vc-format-option input[type="radio"]:checked + div,
+.vc-location-option input[type="radio"]:checked ~ div {
+    color: #667eea;
+}
+
+.vc-format-option input[type="radio"]:checked,
+.vc-location-option input[type="radio"]:checked {
+    accent-color: #667eea;
+}
+
+#custom-path-input {
+    padding-left: 10px;
+    border-left: 3px solid #667eea;
+}
+
+.vc-input {
+    width: 100%;
+    padding: 10px;
+    background: #1e1e1e;
+    border: 1px solid #3a3a3a;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 0.95rem;
+}
+
+.vc-input:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.vc-input::placeholder {
+    color: #666;
+}
+
+/* ==========================================
+   STICKERS (Reemplazan Emojis)
+   ========================================== */
+
+.vc-sticker-img {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    transition: transform 0.2s ease;
+}
+
+.vc-emoji-item:hover .vc-sticker-img {
+    transform: scale(1.2);
+}
+
+.vc-sticker-message {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0 4px;
+}
+
+/* Grid de stickers */
+#vc-emoji-grid {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 8px;
+    padding: 10px;
+}
+
+.vc-emoji-item {
+    padding: 8px;
+    background: #2c2c2c;
+    border: 2px solid #3a3a3a;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.vc-emoji-item:hover {
+    background: #3a3a3a;
+    border-color: #667eea;
+    transform: translateY(-2px);
+}
+
