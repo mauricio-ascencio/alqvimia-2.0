@@ -4,25 +4,44 @@
     box-sizing: border-box;
 }
 
+/* Las variables CSS principales están definidas en themes.css */
+/* Estas son fallbacks por si no se carga el tema */
 :root {
     --primary-color: #2563eb;
+    --primary-hover: #1d4ed8;
+    --primary-light: rgba(37, 99, 235, 0.1);
     --secondary-color: #64748b;
     --success-color: #10b981;
     --danger-color: #ef4444;
     --warning-color: #f59e0b;
+    --info-color: #06b6d4;
     --dark-bg: #0f172a;
     --card-bg: #1e293b;
+    --card-bg-hover: #334155;
     --border-color: #334155;
     --text-primary: #f1f5f9;
     --text-secondary: #cbd5e1;
     --hover-bg: #475569;
+    --gradient-primary: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    --gradient-header: linear-gradient(90deg, #1e293b, #0f172a);
+    --gradient-accent: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+    --gradient-card: linear-gradient(145deg, #1e293b, #0f172a);
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+    --shadow-glow: 0 0 20px rgba(37, 99, 235, 0.3);
+    --border-radius-sm: 6px;
+    --border-radius-md: 12px;
+    --border-radius-lg: 16px;
+    --border-radius-xl: 24px;
 }
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    background: var(--gradient-primary);
     color: var(--text-primary);
     overflow: hidden;
+    transition: background 0.3s ease, color 0.3s ease;
 }
 
 .app-container {
@@ -39,7 +58,8 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--shadow-md);
+    transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .header-left {
@@ -218,7 +238,7 @@ input:checked + .connection-slider:before {
     flex-shrink: 0;
     z-index: 100;
     position: relative;
-    transition: width 0.3s ease;
+    transition: width 0.3s ease, background 0.3s ease, border-color 0.3s ease;
 }
 
 .sidebar.collapsed {
@@ -272,7 +292,7 @@ input:checked + .connection-slider:before {
     align-items: center;
     gap: 0.75rem;
     font-size: 1rem;
-    transition: all 0.3s;
+    transition: all 0.3s ease;
     white-space: nowrap;
     position: relative;
 }

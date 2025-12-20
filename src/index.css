@@ -1,5 +1,8 @@
 /* Alqvimia RPA 2.0 - Importación de estilos */
 
+/* Sistema de temas */
+@import './assets/css/themes.css';
+
 /* Estilos base y variables */
 @import './assets/css/styles.css';
 

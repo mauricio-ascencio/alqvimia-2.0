@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import express from 'express'
 import { createServer } from 'http'
 import { Server } from 'socket.io'
@@ -11,6 +12,12 @@ import { registerExecutorHandlers } from './handlers/executorHandlers.js'
 import { registerAgentHandlers } from './handlers/agentHandlers.js'
 import { registerMCPHandlers } from './handlers/mcpHandlers.js'
 
+// Servicios
+import { initDatabase, isConnected } from './services/database.js'
+
+// Rutas API
+import settingsRoutes from './routes/settings.js'
+
 const app = express()
 const httpServer = createServer(app)
 
@@ -21,6 +28,9 @@ app.use(cors({
 }))
 
 app.use(express.json())
+
+// Rutas API
+app.use('/api/settings', settingsRoutes)
 
 // Socket.IO
 const io = new Server(httpServer, {
@@ -104,22 +114,35 @@ app.get('/api/workflows', (req, res) => {
 
 app.get('/api/settings', (req, res) => {
   res.json({
-    serverPort: 3000,
+    serverPort: 7000,
     frontendUrl: 'http://localhost:5173'
   })
 })
 
 // Puerto
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 7000
 
-httpServer.listen(PORT, () => {
-  console.log('')
-  console.log('========================================')
-  console.log('   Alqvimia 2.0 - Backend Server')
-  console.log('========================================')
-  console.log(`   Puerto: ${PORT}`)
-  console.log(`   Socket.IO: Activo`)
-  console.log(`   API REST: http://localhost:${PORT}/api`)
-  console.log('========================================')
-  console.log('')
+// Función de inicio del servidor
+async function startServer() {
+  // Intentar conectar a la base de datos
+  const dbConnected = await initDatabase()
+
+  httpServer.listen(PORT, async () => {
+    console.log('')
+    console.log('========================================')
+    console.log('   Alqvimia 2.0 - Backend Server')
+    console.log('========================================')
+    console.log(`   Puerto: ${PORT}`)
+    console.log(`   Socket.IO: Activo`)
+    console.log(`   API REST: http://localhost:${PORT}/api`)
+    console.log(`   MySQL: ${dbConnected ? 'Conectado' : 'No disponible'}`)
+    console.log('========================================')
+    console.log('')
+  })
+}
+
+// Iniciar servidor
+startServer().catch(error => {
+  console.error('Error al iniciar el servidor:', error)
+  process.exit(1)
 })

@@ -22,7 +22,7 @@ if not exist "server\node_modules" (
 )
 
 echo.
-echo  [2/3] Iniciando Backend (Puerto 3000)...
+echo  [2/3] Iniciando Backend (Puerto 7000)...
 start "Alqvimia Backend" cmd /k "cd server && npm start"
 
 :: Esperar a que el servidor inicie
@@ -36,7 +36,7 @@ echo  ========================================
 echo       SERVICIOS INICIADOS
 echo  ========================================
 echo.
-echo   Backend:  http://localhost:3000
+echo   Backend:  http://localhost:7000
 echo   Frontend: http://localhost:5173
 echo.
 echo   Presiona cualquier tecla para cerrar
