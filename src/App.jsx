@@ -28,27 +28,7 @@ function App() {
   const { user, isAuthenticated, loading, logout } = useAuth()
   const hasGreeted = useRef(false)
 
-  // Si está cargando, mostrar spinner
-  if (loading) {
-    return (
-      <div style={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: '#0f172a'
-      }}>
-        <i className="fas fa-spinner fa-spin" style={{ fontSize: '3rem', color: '#3b82f6' }}></i>
-      </div>
-    )
-  }
-
-  // Si no está autenticado, mostrar login
-  if (!isAuthenticated) {
-    return <LoginView onLoginSuccess={() => {}} />
-  }
-
-  // Presentación del agente al iniciar la aplicación
+  // Presentación del agente al iniciar la aplicación (hook ANTES de los returns condicionales)
   useEffect(() => {
     if (hasGreeted.current) return
 
