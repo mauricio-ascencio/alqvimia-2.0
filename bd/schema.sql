@@ -410,8 +410,9 @@ INSERT INTO configuraciones_sistema (clave, valor, tipo, categoria, descripcion)
 ('recorder_screenshot', 'true', 'boolean', 'recorder', 'Capturar screenshots al grabar');
 
 -- Insertar usuario administrador por defecto (password: admin123)
+-- Hash generado con bcrypt.hash('admin123', 10)
 INSERT INTO usuarios (nombre, email, password_hash, rol) VALUES
-('Administrador', 'admin@alqvimia.local', '$2b$10$rOzJqQZQZQZQZQZQZQZQZuQZQZQZQZQZQZQZQZQZQZQZQZQZQZQZQ', 'admin');
+('Administrador', 'admin@alqvimia.local', '$2b$10$KVr6lUq3Kb1ryug7c5aUlumatw.s6uSLRqg4TsiWfIf81uBQZI0b2', 'admin');
 
 -- Insertar configuración del usuario admin
 INSERT INTO configuraciones_usuario (usuario_id, tema, idioma) VALUES
