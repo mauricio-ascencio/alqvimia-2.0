@@ -12,7 +12,9 @@
       "Bash(powershell:*)",
       "Bash(node server.js:*)",
       "Bash(npm install:*)",
-      "Bash(docker compose:*)"
+      "Bash(docker compose:*)",
+      "Bash(docker exec:*)",
+      "Bash(node -e:*)"
     ]
   }
 }

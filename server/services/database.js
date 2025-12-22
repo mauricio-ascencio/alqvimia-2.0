@@ -5,28 +5,34 @@
 
 import mysql from 'mysql2/promise'
 
-// Configuración de la base de datos (usando variables del .env raiz)
-const dbConfig = {
-  host: process.env.MYSQL_HOST || process.env.DB_HOST || 'localhost',
-  port: parseInt(process.env.MYSQL_PORT || process.env.DB_PORT) || 3307,
-  user: process.env.MYSQL_USER || process.env.DB_USER || 'root',
-  password: process.env.MYSQL_PASSWORD || process.env.DB_PASSWORD || '',
-  database: process.env.MYSQL_DATABASE || process.env.DB_NAME || 'alqvimia_rpa',
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0
-}
-
 // Pool de conexiones
 let pool = null
+
+/**
+ * Obtiene la configuración de la base de datos
+ * Se llama en tiempo de ejecución (después de dotenv.config())
+ */
+function getDbConfig() {
+  return {
+    host: process.env.MYSQL_HOST || process.env.DB_HOST || 'localhost',
+    port: parseInt(process.env.MYSQL_PORT || process.env.DB_PORT) || 3307,
+    user: process.env.MYSQL_USER || process.env.DB_USER || 'root',
+    password: process.env.MYSQL_PASSWORD || process.env.DB_PASSWORD || '',
+    database: process.env.MYSQL_DATABASE || process.env.DB_NAME || 'alqvimia_rpa',
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0,
+    enableKeepAlive: true,
+    keepAliveInitialDelay: 0
+  }
+}
 
 /**
  * Inicializa el pool de conexiones
  */
 export async function initDatabase() {
   try {
+    const dbConfig = getDbConfig()
     pool = mysql.createPool(dbConfig)
 
     // Verificar conexión

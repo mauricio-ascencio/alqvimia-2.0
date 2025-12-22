@@ -21,8 +21,6 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-alqvimia2024}
       MYSQL_DATABASE: ${MYSQL_DATABASE:-alqvimia_rpa}
-      MYSQL_USER: ${MYSQL_USER:-root}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-alqvimia2024}
     ports:
       - "${MYSQL_PORT:-3307}:3306"
     volumes:
