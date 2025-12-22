@@ -418,5 +418,455 @@ INSERT INTO configuraciones_usuario (usuario_id, tema, idioma) VALUES
 (1, 'midnight-blue', 'es');
 
 -- =====================================================
+-- TABLA: configuraciones_ocr
+-- Configuraciones de proveedores OCR
+-- =====================================================
+CREATE TABLE IF NOT EXISTS configuraciones_ocr (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id INT,
+    provider ENUM('tesseract', 'azure', 'google', 'aws') DEFAULT 'tesseract',
+    api_key_encrypted TEXT,
+    endpoint VARCHAR(255),
+    region VARCHAR(50),
+    idiomas_preferidos JSON DEFAULT '["es", "en"]',
+    configuracion_adicional JSON,
+    activo BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+    INDEX idx_provider (provider),
+    INDEX idx_usuario (usuario_id)
+) ENGINE=InnoDB;
+
+-- =====================================================
+-- TABLA: documentos_procesados
+-- Documentos procesados por IDP
+-- =====================================================
+CREATE TABLE IF NOT EXISTS documentos_procesados (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    uuid VARCHAR(36) UNIQUE NOT NULL,
+    usuario_id INT,
+    tipo_documento ENUM('factura', 'contrato', 'orden_compra', 'formulario', 'recibo', 'identificacion', 'otro') DEFAULT 'otro',
+    nombre_archivo VARCHAR(255) NOT NULL,
+    ruta_archivo VARCHAR(500),
+    tamanio_bytes BIGINT,
+    formato VARCHAR(20),
+    datos_extraidos JSON,
+    confianza_extraccion DECIMAL(5,2),
+    estado ENUM('pendiente', 'procesando', 'completado', 'error') DEFAULT 'pendiente',
+    ocr_provider VARCHAR(50),
+    tiempo_procesamiento_ms INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE SET NULL,
+    INDEX idx_tipo (tipo_documento),
+    INDEX idx_estado (estado),
+    INDEX idx_fecha (created_at)
+) ENGINE=InnoDB;
+
+-- =====================================================
+-- TABLA: process_mining_logs
+-- Logs para Process Mining
+-- =====================================================
+CREATE TABLE IF NOT EXISTS process_mining_logs (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    proceso_id VARCHAR(100) NOT NULL,
+    caso_id VARCHAR(100) NOT NULL,
+    actividad VARCHAR(255) NOT NULL,
+    timestamp_inicio DATETIME NOT NULL,
+    timestamp_fin DATETIME,
+    recurso VARCHAR(100),
+    costo DECIMAL(10,2),
+    atributos JSON,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_proceso (proceso_id),
+    INDEX idx_caso (caso_id),
+    INDEX idx_actividad (actividad),
+    INDEX idx_timestamp (timestamp_inicio)
+) ENGINE=InnoDB;
+
+-- =====================================================
+-- TABLA: task_mining_sesiones
+-- Sesiones de Task Mining
+-- =====================================================
+CREATE TABLE IF NOT EXISTS task_mining_sesiones (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    uuid VARCHAR(36) UNIQUE NOT NULL,
+    usuario_id INT,
+    nombre VARCHAR(150),
+    estado ENUM('grabando', 'pausado', 'analizando', 'completado') DEFAULT 'grabando',
+    inicio DATETIME DEFAULT CURRENT_TIMESTAMP,
+    fin DATETIME,
+    total_acciones INT DEFAULT 0,
+    aplicaciones_detectadas JSON,
+    patrones_identificados JSON,
+    oportunidades_automatizacion JSON,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE SET NULL,
+    INDEX idx_usuario (usuario_id),
+    INDEX idx_estado (estado)
+) ENGINE=InnoDB;
+
+-- =====================================================
+-- TABLA: agentes_autonomos
+-- Agentes autónomos configurados
+-- =====================================================
+CREATE TABLE IF NOT EXISTS agentes_autonomos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    uuid VARCHAR(36) UNIQUE NOT NULL,
+    nombre VARCHAR(150) NOT NULL,
+    descripcion TEXT,
+    plantilla_id INT,
+    usuario_creador_id INT,
+    estado ENUM('activo', 'pausado', 'error', 'inactivo') DEFAULT 'inactivo',
+    configuracion JSON,
+    metricas JSON,
+    ultima_ejecucion DATETIME,
+    tareas_completadas INT DEFAULT 0,
+    tasa_exito DECIMAL(5,2) DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (plantilla_id) REFERENCES plantillas_agentes(id) ON DELETE SET NULL,
+    FOREIGN KEY (usuario_creador_id) REFERENCES usuarios(id) ON DELETE SET NULL,
+    INDEX idx_estado (estado),
+    INDEX idx_plantilla (plantilla_id)
+) ENGINE=InnoDB;
+
+-- =====================================================
+-- TABLA: comunicaciones_mining
+-- Datos de Communications Mining
+-- =====================================================
+CREATE TABLE IF NOT EXISTS comunicaciones_mining (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    tipo ENUM('email', 'chat', 'llamada', 'ticket') NOT NULL,
+    fuente VARCHAR(100),
+    remitente VARCHAR(255),
+    destinatario VARCHAR(255),
+    asunto VARCHAR(500),
+    contenido TEXT,
+    fecha_comunicacion DATETIME,
+    sentimiento ENUM('positivo', 'neutral', 'negativo') DEFAULT 'neutral',
+    puntuacion_sentimiento DECIMAL(3,2),
+    topicos JSON,
+    entidades_extraidas JSON,
+    intencion VARCHAR(100),
+    urgencia ENUM('baja', 'media', 'alta', 'critica') DEFAULT 'media',
+    tiempo_respuesta_minutos INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_tipo (tipo),
+    INDEX idx_sentimiento (sentimiento),
+    INDEX idx_fecha (fecha_comunicacion),
+    FULLTEXT INDEX ft_contenido (asunto, contenido)
+) ENGINE=InnoDB;
+
+-- =====================================================
+-- TABLA: test_suites
+-- Suites de pruebas automatizadas
+-- =====================================================
+CREATE TABLE IF NOT EXISTS test_suites (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    uuid VARCHAR(36) UNIQUE NOT NULL,
+    nombre VARCHAR(150) NOT NULL,
+    descripcion TEXT,
+    usuario_id INT,
+    tipo ENUM('unit', 'integration', 'e2e', 'regression') DEFAULT 'unit',
+    configuracion JSON,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE SET NULL,
+    INDEX idx_tipo (tipo)
+) ENGINE=InnoDB;
+
+-- =====================================================
+-- TABLA: test_cases
+-- Casos de prueba
+-- =====================================================
+CREATE TABLE IF NOT EXISTS test_cases (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    suite_id INT NOT NULL,
+    nombre VARCHAR(150) NOT NULL,
+    descripcion TEXT,
+    pasos JSON,
+    resultado_esperado TEXT,
+    prioridad ENUM('baja', 'media', 'alta', 'critica') DEFAULT 'media',
+    activo BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (suite_id) REFERENCES test_suites(id) ON DELETE CASCADE,
+    INDEX idx_suite (suite_id),
+    INDEX idx_prioridad (prioridad)
+) ENGINE=InnoDB;
+
+-- =====================================================
+-- TABLA: test_results
+-- Resultados de ejecución de pruebas
+-- =====================================================
+CREATE TABLE IF NOT EXISTS test_results (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    test_case_id INT NOT NULL,
+    suite_id INT NOT NULL,
+    estado ENUM('passed', 'failed', 'skipped', 'error') NOT NULL,
+    duracion_ms INT,
+    mensaje_error TEXT,
+    screenshots JSON,
+    logs TEXT,
+    ejecutado_por INT,
+    fecha_ejecucion DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (test_case_id) REFERENCES test_cases(id) ON DELETE CASCADE,
+    FOREIGN KEY (suite_id) REFERENCES test_suites(id) ON DELETE CASCADE,
+    FOREIGN KEY (ejecutado_por) REFERENCES usuarios(id) ON DELETE SET NULL,
+    INDEX idx_test_case (test_case_id),
+    INDEX idx_suite (suite_id),
+    INDEX idx_estado (estado),
+    INDEX idx_fecha (fecha_ejecucion)
+) ENGINE=InnoDB;
+
+-- =====================================================
+-- TABLA: archivos_codigo
+-- Archivos del editor de código
+-- =====================================================
+CREATE TABLE IF NOT EXISTS archivos_codigo (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    uuid VARCHAR(36) UNIQUE NOT NULL,
+    usuario_id INT,
+    nombre VARCHAR(255) NOT NULL,
+    extension VARCHAR(20),
+    lenguaje VARCHAR(50),
+    contenido LONGTEXT,
+    carpeta_id INT,
+    es_plantilla BOOLEAN DEFAULT FALSE,
+    compartido BOOLEAN DEFAULT FALSE,
+    version INT DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+    INDEX idx_usuario (usuario_id),
+    INDEX idx_lenguaje (lenguaje)
+) ENGINE=InnoDB;
+
+-- =====================================================
+-- TABLA: historial_ia
+-- Historial de interacciones con IA
+-- =====================================================
+CREATE TABLE IF NOT EXISTS historial_ia (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id INT,
+    plantilla_id INT,
+    prompt TEXT NOT NULL,
+    respuesta LONGTEXT,
+    tokens_entrada INT,
+    tokens_salida INT,
+    tiempo_respuesta_ms INT,
+    contexto JSON,
+    satisfaccion INT CHECK (satisfaccion >= 1 AND satisfaccion <= 5),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE SET NULL,
+    FOREIGN KEY (plantilla_id) REFERENCES plantillas_ia(id) ON DELETE SET NULL,
+    INDEX idx_usuario (usuario_id),
+    INDEX idx_plantilla (plantilla_id),
+    INDEX idx_fecha (created_at)
+) ENGINE=InnoDB;
+
+-- =====================================================
+-- TABLA: carpetas_workflow
+-- Carpetas para organizar workflows
+-- =====================================================
+CREATE TABLE IF NOT EXISTS carpetas_workflow (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    descripcion TEXT,
+    usuario_id INT,
+    carpeta_padre_id INT,
+    color VARCHAR(20) DEFAULT '#3b82f6',
+    icono VARCHAR(50) DEFAULT 'fa-folder',
+    orden INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+    FOREIGN KEY (carpeta_padre_id) REFERENCES carpetas_workflow(id) ON DELETE CASCADE,
+    INDEX idx_usuario (usuario_id),
+    INDEX idx_padre (carpeta_padre_id)
+) ENGINE=InnoDB;
+
+-- Agregar columna de carpeta a workflows
+ALTER TABLE workflows ADD COLUMN carpeta_id INT DEFAULT NULL;
+ALTER TABLE workflows ADD FOREIGN KEY (carpeta_id) REFERENCES carpetas_workflow(id) ON DELETE SET NULL;
+
+-- Insertar configuraciones adicionales
+INSERT INTO configuraciones_sistema (clave, valor, tipo, categoria, descripcion) VALUES
+('ocr_provider_default', 'tesseract', 'string', 'ocr', 'Proveedor OCR por defecto'),
+('ocr_idiomas_default', '["es", "en", "pt"]', 'json', 'ocr', 'Idiomas OCR por defecto'),
+('process_mining_enabled', 'true', 'boolean', 'ai', 'Habilitar Process Mining'),
+('task_mining_enabled', 'true', 'boolean', 'ai', 'Habilitar Task Mining'),
+('idp_enabled', 'true', 'boolean', 'ai', 'Habilitar IDP'),
+('agentes_autonomos_max', '10', 'number', 'ai', 'Máximo de agentes autónomos'),
+('test_suite_enabled', 'true', 'boolean', 'testing', 'Habilitar Test Suite'),
+('communications_mining_enabled', 'true', 'boolean', 'ai', 'Habilitar Communications Mining'),
+('idiomas_disponibles', '["es", "en", "pt"]', 'json', 'general', 'Idiomas disponibles en el sistema');
+
+-- =====================================================
+-- TABLA: programaciones_workflow
+-- Programaciones (Scheduler) de workflows
+-- =====================================================
+CREATE TABLE IF NOT EXISTS programaciones_workflow (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    uuid VARCHAR(36) UNIQUE NOT NULL,
+    workflow_id INT NOT NULL,
+    nombre VARCHAR(150) NOT NULL,
+    descripcion TEXT,
+    tipo_programacion ENUM('once', 'daily', 'weekly', 'monthly', 'cron') DEFAULT 'once',
+    expresion_cron VARCHAR(100),
+    hora_ejecucion TIME,
+    dias_semana JSON,
+    dia_mes INT,
+    fecha_inicio DATE,
+    fecha_fin DATE,
+    activo BOOLEAN DEFAULT TRUE,
+    ultima_ejecucion DATETIME,
+    proxima_ejecucion DATETIME,
+    ejecuciones_totales INT DEFAULT 0,
+    ejecuciones_exitosas INT DEFAULT 0,
+    ejecuciones_fallidas INT DEFAULT 0,
+    notificar_email BOOLEAN DEFAULT FALSE,
+    email_notificacion VARCHAR(255),
+    usuario_id INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (workflow_id) REFERENCES workflows(id) ON DELETE CASCADE,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE SET NULL,
+    INDEX idx_workflow (workflow_id),
+    INDEX idx_activo (activo),
+    INDEX idx_proxima (proxima_ejecucion)
+) ENGINE=InnoDB;
+
+-- =====================================================
+-- TABLA: agentes_exe
+-- Ejecutables generados de agentes
+-- =====================================================
+CREATE TABLE IF NOT EXISTS agentes_exe (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    agente_id INT NOT NULL,
+    nombre_archivo VARCHAR(255) NOT NULL,
+    ruta_archivo VARCHAR(500) NOT NULL,
+    tamanio_bytes BIGINT,
+    version VARCHAR(20) DEFAULT '1.0.0',
+    incluye_runtime BOOLEAN DEFAULT TRUE,
+    auto_start BOOLEAN DEFAULT FALSE,
+    iniciar_minimizado BOOLEAN DEFAULT TRUE,
+    generar_logs BOOLEAN DEFAULT TRUE,
+    icono_personalizado VARCHAR(500),
+    checksum VARCHAR(64),
+    generado_por INT,
+    fecha_generacion DATETIME DEFAULT CURRENT_TIMESTAMP,
+    ultima_ejecucion DATETIME,
+    ejecuciones_totales INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (agente_id) REFERENCES agentes_autonomos(id) ON DELETE CASCADE,
+    FOREIGN KEY (generado_por) REFERENCES usuarios(id) ON DELETE SET NULL,
+    INDEX idx_agente (agente_id)
+) ENGINE=InnoDB;
+
+-- =====================================================
+-- TABLA: workflows_exportados
+-- Historial de exportaciones de workflows
+-- =====================================================
+CREATE TABLE IF NOT EXISTS workflows_exportados (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    uuid VARCHAR(36) UNIQUE NOT NULL,
+    nombre_archivo VARCHAR(255) NOT NULL,
+    formato ENUM('wfl', 'alqzip', 'json') DEFAULT 'wfl',
+    tamanio_bytes BIGINT,
+    workflows_incluidos INT DEFAULT 1,
+    checksum VARCHAR(64),
+    usuario_id INT,
+    fecha_exportacion DATETIME DEFAULT CURRENT_TIMESTAMP,
+    ruta_archivo VARCHAR(500),
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE SET NULL,
+    INDEX idx_usuario (usuario_id),
+    INDEX idx_fecha (fecha_exportacion)
+) ENGINE=InnoDB;
+
+-- =====================================================
+-- TABLA: workflows_importados
+-- Historial de importaciones de workflows
+-- =====================================================
+CREATE TABLE IF NOT EXISTS workflows_importados (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    uuid VARCHAR(36) UNIQUE NOT NULL,
+    nombre_archivo_original VARCHAR(255) NOT NULL,
+    formato ENUM('wfl', 'alqzip', 'json') DEFAULT 'wfl',
+    workflows_importados INT DEFAULT 1,
+    usuario_id INT,
+    fecha_importacion DATETIME DEFAULT CURRENT_TIMESTAMP,
+    workflows_ids JSON,
+    errores JSON,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE SET NULL,
+    INDEX idx_usuario (usuario_id),
+    INDEX idx_fecha (fecha_importacion)
+) ENGINE=InnoDB;
+
+-- =====================================================
+-- TABLA: elementos_grabados
+-- Elementos capturados por el recorder con variables
+-- =====================================================
+CREATE TABLE IF NOT EXISTS elementos_grabados (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    sesion_id VARCHAR(36) NOT NULL,
+    nombre_variable VARCHAR(100) NOT NULL,
+    tipo_elemento VARCHAR(50),
+    tipo_accion VARCHAR(50),
+    selector_css TEXT,
+    xpath TEXT,
+    texto_elemento TEXT,
+    coordenadas JSON,
+    imagen_base64 LONGTEXT,
+    ventana_handle VARCHAR(50),
+    proceso_nombre VARCHAR(100),
+    configuracion JSON,
+    orden INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_sesion (sesion_id),
+    INDEX idx_variable (nombre_variable)
+) ENGINE=InnoDB;
+
+-- =====================================================
+-- TABLA: archivos_wfl
+-- Archivos .wfl guardados
+-- =====================================================
+CREATE TABLE IF NOT EXISTS archivos_wfl (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    uuid VARCHAR(36) UNIQUE NOT NULL,
+    nombre VARCHAR(255) NOT NULL,
+    descripcion TEXT,
+    workflow_id INT,
+    contenido_encoded LONGTEXT NOT NULL,
+    checksum VARCHAR(64),
+    version_formato VARCHAR(20) DEFAULT '2.0',
+    tamanio_bytes BIGINT,
+    usuario_id INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (workflow_id) REFERENCES workflows(id) ON DELETE SET NULL,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE SET NULL,
+    INDEX idx_workflow (workflow_id),
+    INDEX idx_usuario (usuario_id)
+) ENGINE=InnoDB;
+
+-- Insertar configuraciones adicionales del scheduler y agentes
+INSERT INTO configuraciones_sistema (clave, valor, tipo, categoria, descripcion) VALUES
+('scheduler_enabled', 'true', 'boolean', 'scheduler', 'Habilitar programador de workflows'),
+('scheduler_max_concurrent', '5', 'number', 'scheduler', 'Máximo de ejecuciones programadas concurrentes'),
+('scheduler_retry_on_failure', 'true', 'boolean', 'scheduler', 'Reintentar ejecuciones fallidas'),
+('scheduler_max_retries', '3', 'number', 'scheduler', 'Máximo de reintentos'),
+('agents_exe_path', 'C:\\Alqvimia\\Agents', 'string', 'agents', 'Ruta por defecto para ejecutables'),
+('agents_max_exe', '20', 'number', 'agents', 'Máximo de ejecutables por usuario'),
+('export_format_default', 'wfl', 'string', 'export', 'Formato de exportación por defecto'),
+('import_validate_checksum', 'true', 'boolean', 'import', 'Validar checksum al importar'),
+('recorder_highlight_color', '#22c55e', 'string', 'recorder', 'Color de resaltado del recorder'),
+('recorder_auto_variable_name', 'true', 'boolean', 'recorder', 'Generar nombres de variable automáticamente');
+
+-- =====================================================
 -- FIN DEL ESQUEMA
 -- =====================================================

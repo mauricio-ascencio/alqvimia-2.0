@@ -1,7 +1,18 @@
 {
   "permissions": {
     "allow": [
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(if exist \"c:\\\\Git\\\\alqvimia-2.0\\\\server\\\\.env\" del \"c:\\\\Git\\\\alqvimia-2.0\\\\server\\\\.env\")",
+      "Bash(npm install)",
+      "Bash(dir:*)",
+      "Bash(npm run build:*)",
+      "Bash(timeout 10 npm run dev:*)",
+      "Bash(if not exist \"C:\\\\Alqvimia\" mkdir \"C:\\\\Alqvimia\")",
+      "Bash(if not exist \"C:\\\\Alqvimia\\\\Agents\" mkdir \"C:\\\\Alqvimia\\\\Agents\")",
+      "Bash(powershell:*)",
+      "Bash(node server.js:*)",
+      "Bash(npm install:*)",
+      "Bash(docker compose:*)"
     ]
   }
 }

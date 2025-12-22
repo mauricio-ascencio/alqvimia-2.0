@@ -1,5 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useSocket } from './context/SocketContext'
+import { useLanguage } from './context/LanguageContext'
+import { useAuth } from './context/AuthContext'
+import LanguageSelector from './components/LanguageSelector'
+import LoginView from './views/LoginView'
 
 // Vistas - usando las clases CSS exactas del original
 import SpyView from './views/SpyView'
@@ -12,12 +16,112 @@ import OmnichannelView from './views/OmnichannelView'
 import VideoConferenceView from './views/VideoConferenceView'
 import AgentsView from './views/AgentsView'
 import MCPView from './views/MCPView'
+import CodeEditorView from './views/CodeEditorView'
+import SchedulerView from './views/SchedulerView'
 import SettingsView from './views/SettingsView'
 
 function App() {
   const [currentView, setCurrentView] = useState('spy')
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const { isConnected, connect, disconnect } = useSocket()
+  const { t } = useLanguage()
+  const { user, isAuthenticated, loading, logout } = useAuth()
+  const hasGreeted = useRef(false)
+
+  // Si está cargando, mostrar spinner
+  if (loading) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: '#0f172a'
+      }}>
+        <i className="fas fa-spinner fa-spin" style={{ fontSize: '3rem', color: '#3b82f6' }}></i>
+      </div>
+    )
+  }
+
+  // Si no está autenticado, mostrar login
+  if (!isAuthenticated) {
+    return <LoginView onLoginSuccess={() => {}} />
+  }
+
+  // Presentación del agente al iniciar la aplicación
+  useEffect(() => {
+    if (hasGreeted.current) return
+
+    const speakGreeting = () => {
+      // Cargar configuración guardada
+      const savedSettings = localStorage.getItem('alqvimia-settings')
+      if (!savedSettings) return
+
+      try {
+        const settings = JSON.parse(savedSettings)
+        const agentVoice = settings.agentVoice
+
+        // Verificar si está habilitado hablar al iniciar
+        if (!agentVoice?.speakOnStart) return
+
+        // Obtener las voces disponibles
+        const voices = window.speechSynthesis.getVoices()
+        if (voices.length === 0) {
+          // Las voces pueden cargarse de forma asíncrona
+          window.speechSynthesis.onvoiceschanged = () => {
+            speakGreetingWithVoices()
+          }
+          return
+        }
+
+        speakGreetingWithVoices()
+
+        function speakGreetingWithVoices() {
+          if (hasGreeted.current) return
+          hasGreeted.current = true
+
+          const currentVoices = window.speechSynthesis.getVoices()
+          const agentName = agentVoice?.agentName || 'Alqvimia'
+          const greetingTemplate = agentVoice?.greetingMessage || 'Hola, soy {agentName}, tu asistente de automatización. ¿En qué puedo ayudarte hoy?'
+          const greeting = greetingTemplate.replace('{agentName}', agentName)
+
+          const utterance = new SpeechSynthesisUtterance(greeting)
+
+          // Encontrar la voz seleccionada
+          const selectedVoice = currentVoices.find(v => v.voiceURI === agentVoice?.voiceId)
+          if (selectedVoice) {
+            utterance.voice = selectedVoice
+          } else {
+            // Buscar una voz en español por defecto
+            const spanishVoice = currentVoices.find(v => v.lang.startsWith('es'))
+            if (spanishVoice) {
+              utterance.voice = spanishVoice
+            }
+          }
+
+          utterance.rate = agentVoice?.voiceRate || 1
+          utterance.pitch = agentVoice?.voicePitch || 1
+
+          // Pequeño delay para que la UI se cargue primero
+          setTimeout(() => {
+            window.speechSynthesis.speak(utterance)
+          }, 1000)
+        }
+      } catch (e) {
+        console.error('Error loading agent voice settings:', e)
+      }
+    }
+
+    // Intentar hablar cuando las voces estén listas
+    if (window.speechSynthesis) {
+      const voices = window.speechSynthesis.getVoices()
+      if (voices.length > 0) {
+        speakGreeting()
+      } else {
+        window.speechSynthesis.onvoiceschanged = speakGreeting
+      }
+    }
+  }, [])
 
   const handleConnectionToggle = () => {
     if (isConnected) {
@@ -28,17 +132,19 @@ function App() {
   }
 
   const navItems = [
-    { id: 'spy', icon: 'fa-search', label: 'Element Spy' },
-    { id: 'recorder', icon: 'fa-video', label: 'Grabador' },
-    { id: 'workflows', icon: 'fa-project-diagram', label: 'Workflows' },
-    { id: 'executor', icon: 'fa-play-circle', label: 'Ejecutor' },
-    { id: 'agents', icon: 'fa-robot', label: 'Agentes' },
-    { id: 'mcp', icon: 'fa-plug', label: 'MCP Conectores' },
-    { id: 'library', icon: 'fa-folder-open', label: 'Biblioteca' },
-    { id: 'ai-dashboard', icon: 'fa-brain', label: 'IA Dashboard' },
-    { id: 'omnichannel', icon: 'fa-comments', label: 'Omnicanalidad' },
-    { id: 'videoconference', icon: 'fa-video', label: 'Videoconferencia' },
-    { id: 'settings', icon: 'fa-cog', label: 'Configuraciones' }
+    { id: 'spy', icon: 'fa-search', labelKey: 'nav_spy' },
+    { id: 'recorder', icon: 'fa-video', labelKey: 'nav_recorder' },
+    { id: 'workflows', icon: 'fa-project-diagram', labelKey: 'nav_workflows' },
+    { id: 'executor', icon: 'fa-play-circle', labelKey: 'nav_executor' },
+    { id: 'scheduler', icon: 'fa-calendar-alt', labelKey: 'nav_scheduler' },
+    { id: 'code-editor', icon: 'fa-code', labelKey: 'nav_code_editor' },
+    { id: 'agents', icon: 'fa-robot', labelKey: 'nav_agents' },
+    { id: 'mcp', icon: 'fa-plug', labelKey: 'nav_mcp' },
+    { id: 'library', icon: 'fa-folder-open', labelKey: 'nav_library' },
+    { id: 'ai-dashboard', icon: 'fa-brain', labelKey: 'nav_ai_dashboard' },
+    { id: 'omnichannel', icon: 'fa-comments', labelKey: 'nav_omnichannel' },
+    { id: 'videoconference', icon: 'fa-video', labelKey: 'nav_videoconference' },
+    { id: 'settings', icon: 'fa-cog', labelKey: 'nav_settings' }
   ]
 
   const renderView = () => {
@@ -47,6 +153,8 @@ function App() {
       case 'recorder': return <RecorderView />
       case 'workflows': return <WorkflowsView />
       case 'executor': return <ExecutorView />
+      case 'scheduler': return <SchedulerView />
+      case 'code-editor': return <CodeEditorView />
       case 'agents': return <AgentsView />
       case 'mcp': return <MCPView />
       case 'library': return <LibraryView />
@@ -70,7 +178,7 @@ function App() {
         <div className="header-right">
           <div className="connection-toggle-container">
             <span className={`connection-label ${isConnected ? 'connected' : ''}`}>
-              {isConnected ? 'Conectado' : 'Desconectado'}
+              {isConnected ? t('connected') : t('disconnected')}
             </span>
             <label className="connection-switch">
               <input
@@ -81,8 +189,24 @@ function App() {
               <span className="connection-slider"></span>
             </label>
             <span className={`connection-status-text ${isConnected ? 'connected' : ''}`}>
-              {isConnected ? 'Servidor activo' : 'Haz clic para conectar'}
+              {isConnected ? t('server_active') : t('click_to_connect')}
             </span>
+          </div>
+          <LanguageSelector />
+
+          {/* Usuario y Logout */}
+          <div className="user-menu">
+            <span className="user-name">
+              <i className="fas fa-user-circle"></i>
+              {user?.nombre || 'Usuario'}
+            </span>
+            <button
+              className="logout-btn"
+              onClick={logout}
+              title="Cerrar sesión"
+            >
+              <i className="fas fa-sign-out-alt"></i>
+            </button>
           </div>
         </div>
       </header>
@@ -95,7 +219,7 @@ function App() {
             <button
               className="sidebar-toggle"
               id="sidebarToggle"
-              title={sidebarCollapsed ? 'Expandir menú' : 'Contraer menú'}
+              title={sidebarCollapsed ? t('expand_menu') : t('collapse_menu')}
               onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
             >
               <i className="fas fa-bars"></i>
@@ -107,11 +231,11 @@ function App() {
                 key={item.id}
                 className={`nav-item ${currentView === item.id ? 'active' : ''}`}
                 data-view={item.id}
-                data-tooltip={item.label}
+                data-tooltip={t(item.labelKey)}
                 onClick={() => setCurrentView(item.id)}
               >
                 <i className={`fas ${item.icon}`}></i>
-                <span>{item.label}</span>
+                <span>{t(item.labelKey)}</span>
               </button>
             ))}
           </nav>

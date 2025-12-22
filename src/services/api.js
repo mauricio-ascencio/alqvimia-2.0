@@ -1,4 +1,5 @@
-const API_BASE = 'http://localhost:7000'
+// URL del backend desde variables de entorno o default
+const API_BASE = import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000'
 
 async function request(endpoint, options = {}) {
   const url = `${API_BASE}${endpoint}`
@@ -48,10 +49,31 @@ export const api = {
 
 // Servicios específicos
 export const workflowService = {
-  getAll: () => api.get('/api/workflows'),
+  // CRUD básico
+  getAll: (filtros = {}) => {
+    const params = new URLSearchParams(filtros).toString()
+    return api.get(`/api/workflows${params ? '?' + params : ''}`)
+  },
   getById: (id) => api.get(`/api/workflows/${id}`),
-  save: (workflow) => api.post('/api/workflows/save', workflow),
-  delete: (id) => api.delete(`/api/workflows/${id}`)
+  create: (workflow) => api.post('/api/workflows', workflow),
+  update: (id, workflow) => api.put(`/api/workflows/${id}`, workflow),
+  delete: (id) => api.delete(`/api/workflows/${id}`),
+
+  // Ejecuciones
+  execute: (id, data = {}) => api.post(`/api/workflows/${id}/execute`, data),
+  getExecutions: (id, limite = 50) => api.get(`/api/workflows/${id}/executions?limite=${limite}`),
+
+  // Carpetas
+  getFolders: (usuario_id = 1) => api.get(`/api/workflows/meta/folders?usuario_id=${usuario_id}`),
+  createFolder: (folder) => api.post('/api/workflows/meta/folders', folder),
+
+  // Sincronización
+  sync: (workflows, usuario_id = 1) => api.post('/api/workflows/sync', { workflows, usuario_id }),
+
+  // Alias para compatibilidad
+  save: (workflow) => workflow.id
+    ? api.put(`/api/workflows/${workflow.id}`, workflow)
+    : api.post('/api/workflows', workflow)
 }
 
 export const settingsService = {
