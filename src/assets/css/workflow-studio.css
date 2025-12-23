@@ -3303,7 +3303,7 @@
 }
 
 /* ==========================================
-   WINDOWS CLASSIC MESSAGEBOX
+   MODERN MESSAGEBOX (Windows 11 Style)
    ========================================== */
 
 .win-messagebox-overlay {
@@ -3312,128 +3312,92 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 10000;
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
 }
 
 .win-messagebox {
-    background: #ece9d8;
-    border: 1px solid #0054e3;
-    border-radius: 8px 8px 4px 4px;
-    box-shadow:
-        0 0 0 1px #0054e3,
-        2px 2px 10px rgba(0, 0, 0, 0.4),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.5);
-    min-width: 360px;
-    max-width: 500px;
-    font-family: 'Segoe UI', 'Tahoma', 'Microsoft Sans Serif', sans-serif;
-    font-size: 12px;
+    background: var(--card-bg, #1e293b);
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    min-width: 380px;
+    max-width: 480px;
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 14px;
+    overflow: hidden;
+    animation: slideIn 0.25s ease;
 }
 
 /* Barra de título */
 .win-titlebar {
-    background: linear-gradient(180deg,
-        #0a246a 0%,
-        #0a246a 3%,
-        #1b56c5 10%,
-        #1b56c5 90%,
-        #0a246a 97%,
-        #0a246a 100%);
-    border-radius: 6px 6px 0 0;
-    padding: 4px 6px;
+    background: transparent;
+    padding: 16px 20px 12px;
     display: flex;
     align-items: center;
-    gap: 4px;
-    min-height: 26px;
-}
-
-.win-titlebar.error {
-    background: linear-gradient(180deg,
-        #6a0a0a 0%,
-        #6a0a0a 3%,
-        #c51b1b 10%,
-        #c51b1b 90%,
-        #6a0a0a 97%,
-        #6a0a0a 100%);
-}
-
-.win-titlebar.warning {
-    background: linear-gradient(180deg,
-        #6a5a0a 0%,
-        #6a5a0a 3%,
-        #c5a51b 10%,
-        #c5a51b 90%,
-        #6a5a0a 97%,
-        #6a5a0a 100%);
-}
-
-.win-titlebar.success {
-    background: linear-gradient(180deg,
-        #0a6a1a 0%,
-        #0a6a1a 3%,
-        #1bc52b 10%,
-        #1bc52b 90%,
-        #0a6a1a 97%,
-        #0a6a1a 100%);
+    gap: 12px;
 }
 
 .win-titlebar-icon {
-    display: flex;
-    align-items: center;
-}
-
-.win-title-icon {
-    width: 16px;
-    height: 16px;
+    display: none;
 }
 
 .win-title-text {
     flex: 1;
-    color: white;
-    font-weight: bold;
-    font-size: 12px;
-    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
-    padding-left: 2px;
+    color: var(--text-primary, #fff);
+    font-weight: 600;
+    font-size: 16px;
 }
 
 .win-titlebar-buttons {
     display: flex;
-    gap: 2px;
 }
 
 .win-btn-close {
-    width: 21px;
-    height: 21px;
-    background: linear-gradient(180deg, #e08080 0%, #c85050 50%, #b04040 100%);
-    border: 1px solid #500;
-    border-radius: 3px;
-    color: white;
-    font-size: 16px;
-    font-weight: bold;
-    line-height: 1;
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    color: var(--text-secondary, #94a3b8);
+    font-size: 20px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0;
-    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
+    transition: all 0.15s ease;
 }
 
 .win-btn-close:hover {
-    background: linear-gradient(180deg, #f09090 0%, #d86060 50%, #c05050 100%);
-}
-
-.win-btn-close:active {
-    background: linear-gradient(180deg, #b04040 0%, #903030 50%, #802020 100%);
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
 }
 
 /* Contenido */
 .win-content {
-    background: #ece9d8;
-    padding: 20px 16px;
+    background: transparent;
+    padding: 0 20px 20px;
     display: flex;
     gap: 16px;
     align-items: flex-start;
@@ -3441,85 +3405,105 @@
 
 .win-icon {
     flex-shrink: 0;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
+.win-icon.info { background: rgba(59, 130, 246, 0.15); }
+.win-icon.success { background: rgba(16, 185, 129, 0.15); }
+.win-icon.warning { background: rgba(245, 158, 11, 0.15); }
+.win-icon.error { background: rgba(239, 68, 68, 0.15); }
+.win-icon.question { background: rgba(139, 92, 246, 0.15); }
+
 .win-message-icon {
-    width: 48px;
-    height: 48px;
+    width: 32px;
+    height: 32px;
 }
 
 .win-message {
     flex: 1;
-    color: #000;
+    color: var(--text-primary, #fff);
     padding-top: 4px;
 }
 
 .win-message p {
-    margin: 0 0 12px 0;
-    font-size: 12px;
-    line-height: 1.5;
+    margin: 0 0 16px 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-secondary, #94a3b8);
     word-wrap: break-word;
 }
 
 .win-timer {
-    background: #fff;
-    border: 1px solid #7f9db9;
-    padding: 6px 10px;
+    background: var(--dark-bg, rgba(0, 0, 0, 0.2));
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+    border-radius: 8px;
+    padding: 8px 14px;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    font-size: 11px;
+    gap: 10px;
 }
 
 .win-timer-label {
-    color: #444;
+    color: var(--text-secondary, #94a3b8);
+    font-size: 13px;
 }
 
 .win-timer-value {
-    font-family: 'Consolas', 'Courier New', monospace;
-    font-weight: bold;
-    color: #000;
-    font-size: 14px;
+    font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+    font-weight: 600;
+    color: var(--primary-color, #3b82f6);
+    font-size: 16px;
+    letter-spacing: 1px;
 }
 
 /* Botones */
 .win-buttons {
-    background: #ece9d8;
-    padding: 12px 16px;
+    background: var(--dark-bg, rgba(0, 0, 0, 0.2));
+    padding: 16px 20px;
     display: flex;
-    justify-content: center;
-    gap: 8px;
-    border-top: 1px solid #fff;
+    justify-content: flex-end;
+    gap: 10px;
+    border-top: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
 }
 
 .win-btn {
-    min-width: 75px;
-    height: 23px;
-    padding: 0 12px;
-    background: linear-gradient(180deg, #fff 0%, #ece9d8 89%, #d4d0c8 100%);
-    border: 1px solid #003c74;
-    border-radius: 3px;
-    color: #000;
+    min-width: 100px;
+    height: 38px;
+    padding: 0 20px;
+    background: var(--primary-color, #3b82f6);
+    border: none;
+    border-radius: 8px;
+    color: white;
     font-family: inherit;
-    font-size: 11px;
+    font-size: 14px;
+    font-weight: 500;
     cursor: pointer;
-    box-shadow:
-        inset 1px 1px 0 #fff,
-        inset -1px -1px 0 #aca899;
+    transition: all 0.15s ease;
 }
 
 .win-btn:hover {
-    background: linear-gradient(180deg, #fff 0%, #f0ede5 89%, #e0dcd4 100%);
+    background: var(--primary-hover, #2563eb);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
 }
 
 .win-btn:active {
-    background: linear-gradient(180deg, #d4d0c8 0%, #ece9d8 89%, #fff 100%);
-    box-shadow:
-        inset -1px -1px 0 #fff,
-        inset 1px 1px 0 #aca899;
+    transform: translateY(0);
+    box-shadow: none;
 }
 
-.win-btn:focus {
-    outline: 1px dotted #000;
-    outline-offset: -4px;
+.win-btn.secondary {
+    background: transparent;
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.2));
+    color: var(--text-primary, #fff);
+}
+
+.win-btn.secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: none;
 }

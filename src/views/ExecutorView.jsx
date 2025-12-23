@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useSocket } from '../context/SocketContext'
 import { useLanguage } from '../context/LanguageContext'
 import { workflowService } from '../services/api'
+import { resolveVariables } from '../components/workflow/VariableInput'
 
 function ExecutorView() {
   const { t } = useLanguage()
@@ -14,6 +15,13 @@ function ExecutorView() {
   const [workflows, setWorkflows] = useState([])
   const [selectedWorkflow, setSelectedWorkflow] = useState(null)
   const { socket, isConnected } = useSocket()
+
+  // Estados para MessageBox modal
+  const [showMessageBox, setShowMessageBox] = useState(false)
+  const [messageBoxContent, setMessageBoxContent] = useState({ title: '', message: '', type: 'info' })
+  const [messageBoxStartTime, setMessageBoxStartTime] = useState(null)
+  const [messageBoxElapsed, setMessageBoxElapsed] = useState(0)
+  const messageBoxResolveRef = useRef(null)
 
   // Cargar workflows al montar
   const loadWorkflows = async () => {
@@ -108,6 +116,64 @@ function ExecutorView() {
     setExecutionLogs(prev => [...prev, { type, message, timestamp: new Date().toISOString() }])
   }
 
+  // Efecto para actualizar el tiempo del MessageBox
+  useEffect(() => {
+    let interval
+    if (showMessageBox && messageBoxStartTime) {
+      interval = setInterval(() => {
+        setMessageBoxElapsed(Math.floor((Date.now() - messageBoxStartTime) / 1000))
+      }, 1000)
+    }
+    return () => clearInterval(interval)
+  }, [showMessageBox, messageBoxStartTime])
+
+  // Función para mostrar MessageBox
+  const showWindowsMessageBox = (title, message, type = 'info') => {
+    return new Promise((resolve) => {
+      messageBoxResolveRef.current = resolve
+      setMessageBoxContent({ title, message, type })
+      setMessageBoxStartTime(Date.now())
+      setMessageBoxElapsed(0)
+      setShowMessageBox(true)
+    })
+  }
+
+  // Función para cerrar MessageBox
+  const closeMessageBox = () => {
+    setShowMessageBox(false)
+    setMessageBoxStartTime(null)
+    setMessageBoxElapsed(0)
+    if (messageBoxResolveRef.current) {
+      messageBoxResolveRef.current()
+      messageBoxResolveRef.current = null
+    }
+  }
+
+  // Formatear tiempo transcurrido
+  const formatElapsedTime = (seconds) => {
+    const mins = Math.floor(seconds / 60)
+    const secs = seconds % 60
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
+  }
+
+  // Resolver variables en los parámetros de un paso
+  const resolveStepParams = (params, variables = []) => {
+    if (!params) return {}
+    const resolved = {}
+    for (const [key, value] of Object.entries(params)) {
+      if (typeof value === 'string') {
+        resolved[key] = resolveVariables(value, variables)
+      } else if (typeof value === 'object' && value !== null) {
+        resolved[key] = Array.isArray(value)
+          ? value.map(v => typeof v === 'string' ? resolveVariables(v, variables) : v)
+          : resolveStepParams(value, variables)
+      } else {
+        resolved[key] = value
+      }
+    }
+    return resolved
+  }
+
   const executeWorkflow = async () => {
     if (!selectedWorkflow) {
       alert('Selecciona un workflow primero')
@@ -141,6 +207,9 @@ function ExecutorView() {
 
     addLog('info', `Iniciando workflow: ${selectedWorkflow.name}`)
 
+    // Variables del workflow
+    const workflowVariables = selectedWorkflow.variables || []
+
     // Ejecutar cada paso
     for (let i = 0; i < steps.length; i++) {
       const step = steps[i]
@@ -150,15 +219,29 @@ function ExecutorView() {
 
       addLog('info', `Ejecutando: ${step.label || step.action}`)
 
-      // Simular ejecución del paso
-      await new Promise(resolve => setTimeout(resolve, 800))
+      // Resolver variables en los parámetros
+      const resolvedParams = resolveStepParams(step.params, workflowVariables)
+
+      // Si es un message_box, mostrar el diálogo
+      if (step.action === 'message_box' || step.action === 'pause') {
+        const title = resolvedParams?.title || 'Mensaje'
+        const message = resolvedParams?.message || resolveVariables(step.label, workflowVariables)
+        const type = resolvedParams?.type || 'info'
+
+        await showWindowsMessageBox(title, message, type)
+      } else {
+        // Simular ejecución del paso
+        await new Promise(resolve => setTimeout(resolve, 800))
+      }
 
       addLog('success', `Completado: ${step.label || step.action}`)
     }
 
     setIsExecuting(false)
     setProgress(100)
-    addLog('success', `Workflow "${selectedWorkflow.name}" completado`)
+
+    // Mostrar mensaje de completado
+    await showWindowsMessageBox('Workflow Completado', `El workflow "${selectedWorkflow.name}" se ha ejecutado correctamente.`, 'success')
   }
 
   const stopExecution = () => {
@@ -319,6 +402,57 @@ function ExecutorView() {
           </div>
         </div>
       </div>
+
+      {/* MessageBox Modal */}
+      {showMessageBox && (
+        <div className="win-messagebox-overlay" onClick={closeMessageBox}>
+          <div className="win-messagebox" onClick={e => e.stopPropagation()}>
+            {/* Barra de título */}
+            <div className="win-titlebar">
+              <span className="win-title-text">{messageBoxContent.title || 'Alqvimia'}</span>
+              <div className="win-titlebar-buttons">
+                <button className="win-btn-close" onClick={closeMessageBox}>
+                  <i className="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+
+            {/* Contenido */}
+            <div className="win-content">
+              <div className={`win-icon ${messageBoxContent.type}`}>
+                <i className={`fas ${
+                  messageBoxContent.type === 'error' ? 'fa-times-circle' :
+                  messageBoxContent.type === 'warning' ? 'fa-exclamation-triangle' :
+                  messageBoxContent.type === 'success' ? 'fa-check-circle' :
+                  messageBoxContent.type === 'question' ? 'fa-question-circle' :
+                  'fa-info-circle'
+                }`} style={{
+                  fontSize: '28px',
+                  color: messageBoxContent.type === 'error' ? '#ef4444' :
+                         messageBoxContent.type === 'warning' ? '#f59e0b' :
+                         messageBoxContent.type === 'success' ? '#10b981' :
+                         messageBoxContent.type === 'question' ? '#8b5cf6' :
+                         '#3b82f6'
+                }}></i>
+              </div>
+              <div className="win-message">
+                <p>{messageBoxContent.message || 'Mensaje del sistema'}</p>
+                <div className="win-timer">
+                  <span className="win-timer-label">Tiempo:</span>
+                  <span className="win-timer-value">{formatElapsedTime(messageBoxElapsed)}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Botones */}
+            <div className="win-buttons">
+              <button className="win-btn" onClick={closeMessageBox}>
+                Aceptar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

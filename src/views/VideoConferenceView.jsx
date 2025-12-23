@@ -56,6 +56,12 @@ function VideoConferenceView() {
       timerRef.current = setInterval(() => {
         setSessionTime((prev) => prev + 1)
       }, 1000)
+
+      // Asegurar que el video se reproduzca cuando la sesión inicie
+      if (videoRef.current && streamRef.current) {
+        videoRef.current.srcObject = streamRef.current
+        videoRef.current.play().catch(e => console.log('Autoplay prevented:', e))
+      }
     }
     return () => {
       if (timerRef.current) clearInterval(timerRef.current)
@@ -127,18 +133,23 @@ function VideoConferenceView() {
   const startSession = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: true,
+        video: { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: 'user' },
         audio: true
       })
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream
-      }
       streamRef.current = stream
       setIsInSession(true)
       setSessionTime(0)
+
+      // Asignar stream al video después de que el estado cambie
+      setTimeout(() => {
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream
+          videoRef.current.play().catch(e => console.log('Autoplay prevented:', e))
+        }
+      }, 100)
     } catch (err) {
       console.error('Error accessing media devices:', err)
-      alert('No se pudo acceder a la cámara/micrófono')
+      alert('No se pudo acceder a la cámara/micrófono. Verifica los permisos del navegador.')
     }
   }
 

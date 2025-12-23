@@ -4525,43 +4525,37 @@ function WorkflowsView() {
           </div>
         )}
 
-        {/* MessageBox Modal estilo Windows Clásico */}
+        {/* MessageBox Modal Moderno */}
         {showMessageBox && (
-          <div className="win-messagebox-overlay">
-            <div className="win-messagebox">
-              {/* Barra de título Windows */}
-              <div className={`win-titlebar ${messageBoxContent.type}`}>
-                <div className="win-titlebar-icon">
-                  <img
-                    src={messageBoxContent.type === 'error' ? 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="%23ff0000"/><path d="M8 8l8 8M16 8l-8 8" stroke="white" stroke-width="2"/></svg>' :
-                         messageBoxContent.type === 'warning' ? 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2L2 22h20L12 2z" fill="%23ffcc00"/><text x="12" y="18" text-anchor="middle" font-size="14" font-weight="bold">!</text></svg>' :
-                         messageBoxContent.type === 'success' ? 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="%2300aa00"/><path d="M7 12l3 3 7-7" stroke="white" stroke-width="2" fill="none"/></svg>' :
-                         messageBoxContent.type === 'question' ? 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="%230066cc"/><text x="12" y="17" text-anchor="middle" font-size="14" font-weight="bold" fill="white">?</text></svg>' :
-                         'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="%230066cc"/><text x="12" y="17" text-anchor="middle" font-size="14" font-weight="bold" fill="white">i</text></svg>'}
-                    alt=""
-                    className="win-title-icon"
-                  />
-                </div>
+          <div className="win-messagebox-overlay" onClick={closeMessageBox}>
+            <div className="win-messagebox" onClick={e => e.stopPropagation()}>
+              {/* Barra de título */}
+              <div className="win-titlebar">
                 <span className="win-title-text">{messageBoxContent.title || 'Alqvimia'}</span>
                 <div className="win-titlebar-buttons">
                   <button className="win-btn-close" onClick={closeMessageBox}>
-                    <span>×</span>
+                    <i className="fas fa-times"></i>
                   </button>
                 </div>
               </div>
 
               {/* Contenido */}
               <div className="win-content">
-                <div className="win-icon">
-                  <img
-                    src={messageBoxContent.type === 'error' ? 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="%23ff0000"/><circle cx="24" cy="24" r="18" fill="%23cc0000"/><path d="M16 16l16 16M32 16l-16 16" stroke="white" stroke-width="4" stroke-linecap="round"/></svg>' :
-                         messageBoxContent.type === 'warning' ? 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path d="M24 4L4 44h40L24 4z" fill="%23ffcc00" stroke="%23000" stroke-width="1"/><text x="24" y="38" text-anchor="middle" font-size="28" font-weight="bold">!</text></svg>' :
-                         messageBoxContent.type === 'success' ? 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="%2300aa00"/><circle cx="24" cy="24" r="18" fill="%23008800"/><path d="M14 24l7 7 14-14" stroke="white" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>' :
-                         messageBoxContent.type === 'question' ? 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="%230066cc"/><circle cx="24" cy="24" r="18" fill="%23004499"/><text x="24" y="32" text-anchor="middle" font-size="28" font-weight="bold" fill="white">?</text></svg>' :
-                         'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="%230066cc"/><circle cx="24" cy="24" r="18" fill="%23004499"/><text x="24" y="32" text-anchor="middle" font-size="28" font-weight="bold" fill="white">i</text></svg>'}
-                    alt=""
-                    className="win-message-icon"
-                  />
+                <div className={`win-icon ${messageBoxContent.type}`}>
+                  <i className={`fas ${
+                    messageBoxContent.type === 'error' ? 'fa-times-circle' :
+                    messageBoxContent.type === 'warning' ? 'fa-exclamation-triangle' :
+                    messageBoxContent.type === 'success' ? 'fa-check-circle' :
+                    messageBoxContent.type === 'question' ? 'fa-question-circle' :
+                    'fa-info-circle'
+                  }`} style={{
+                    fontSize: '28px',
+                    color: messageBoxContent.type === 'error' ? '#ef4444' :
+                           messageBoxContent.type === 'warning' ? '#f59e0b' :
+                           messageBoxContent.type === 'success' ? '#10b981' :
+                           messageBoxContent.type === 'question' ? '#8b5cf6' :
+                           '#3b82f6'
+                  }}></i>
                 </div>
                 <div className="win-message">
                   <p>{messageBoxContent.message || 'Mensaje del sistema'}</p>

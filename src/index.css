@@ -1045,48 +1045,49 @@
 .language-btn {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
-  color: white;
+  gap: 0.35rem;
+  padding: 0.35rem 0.6rem;
+  background: var(--dark-bg, rgba(255, 255, 255, 0.05));
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.15));
+  border-radius: 16px;
+  color: var(--text-primary, white);
   cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 0.85rem;
+  transition: all 0.2s ease;
+  font-size: 0.75rem;
 }
 
 .language-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
-  border-color: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--primary-color, rgba(255, 255, 255, 0.3));
 }
 
 .language-btn .lang-flag {
-  font-size: 1.1rem;
+  font-size: 0.95rem;
 }
 
 .language-btn .lang-code {
   font-weight: 600;
+  font-size: 0.7rem;
 }
 
 .language-btn i {
-  font-size: 0.7rem;
-  opacity: 0.7;
-  transition: transform 0.3s ease;
+  font-size: 0.6rem;
+  opacity: 0.6;
+  transition: transform 0.2s ease;
 }
 
 .language-dropdown {
   position: absolute;
-  top: calc(100% + 8px);
+  top: calc(100% + 6px);
   right: 0;
-  min-width: 180px;
-  background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  min-width: 160px;
+  background: var(--card-bg, #1e293b);
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
   overflow: hidden;
   z-index: 1000;
-  animation: dropdownSlide 0.2s ease;
+  animation: dropdownSlide 0.15s ease;
 }
 
 @keyframes dropdownSlide {
